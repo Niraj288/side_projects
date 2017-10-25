@@ -1,6 +1,33 @@
 import os
 
+def make_xyz(file):
+    f=open(file,'r')
+    list1=f.readlines()
+    f.close()
+    d={}
+    id=0
+    for line in list1:
+        if len(line.strip().split())==0:
+            continue
+        if "END" in line.split()[0]:
+            break
+        if 'ATOM' in line.split()[0]: #use HETATM only when required
+            print line
+            x,y,z=line.strip().split()[5:8]
+            s=line.strip().split()[-1]
+            d[id]=[s,x,y,z]
+            id+=1
+    g=open(file.split('.')[0]+'.xyz','w')
+    for i in range (len(d)):
+        g.write('  '.join(d[i])+'\n')
+    g.close()
+
+
 def zmatrix(file):
+    if file.split('.')[-1]=='pdb':
+        make_xyz(file)
+    return 'boo yeah'
+    file=file.split('.')[0]+'.xyz'
     os.system('module load gaussian/g16a')
     filename=file.split('.')[0]+'.com'
     os.system('newzmat -ixyz -Ozmat -rebuildzmat '+file+' '+filename)
