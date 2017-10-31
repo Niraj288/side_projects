@@ -405,7 +405,7 @@ def data_extraction(path,pdb_ref):
 		ring=rings[i]
 		if ring!=None:
 			print len(ring)
-		if ring!=None and len(ring)==18:
+		if ring!=None and len(ring)==12:
 			main_ring=ring 
 			print main_ring
 			fig = plt.figure()
