@@ -4,7 +4,7 @@ import os
 
 def xyz_value(path):
 	data = subprocess.check_output('gcartesian '+path, shell=True)
-	return '* xyz '+data
+	return '* xyz '+data+'\n'
 
 def func(path):
 	s0='! DLPNO-CCSD(T) ECP{aug-cc-pVTZ-PP} aug-cc-pVTZ AutoAux TightSCF XYZFile PModel\n'
@@ -19,7 +19,7 @@ def job():
 	path=raw_input('Enter path : ')
 	ref=raw_input('Make all .g16.out files ?? (y/n) : ')
 	for i in os.listdir(path):
-		if '.g16.out'==path[-8:]:
+		if '.g16.out'==i[-8:]:
 			if ref=='y' or raw_input('Is the file '+i+' an input ?? (y/n) : ')=='y':
 				filename=i.split('.')[0]
 				f=open(filename+'.orca','w')
@@ -29,3 +29,4 @@ def job():
 
 
 
+job()
