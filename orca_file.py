@@ -16,16 +16,27 @@ def func(path):
 	return s0+s1+s2+s3+s4
 
 def job():
+	mode=raw_input('Enter mode : ')
 	path=raw_input('Enter path : ')
 	ref=raw_input('Make all .g16.out files ?? (y/n) : ')
-	for i in os.listdir(path):
-		if '.g16.out'==path[-8:]:
-			if ref=='y' or raw_input('Is the file '+i+' an input ?? (y/n) : ')=='y':
-				filename=i.split('.')[0]
-				f=open(filename+'.orca','w')
-				f.write(func(i))
-				f.close()
+	li=[]
+	try:
+		for i in os.listdir(path):
+			if '.g16.out'==i[-8:]:
+				if ref=='y' or raw_input('Is the file '+i+' an input ?? (y/n) : ')=='y':
+					filename=i.split('.')[0]
+					f=open(filename+'.orca','w')
+					f.write(func(i))
+					f.close()
+					li.append(filename+'.orca')
+	except OSError:
+		filename=path.split('.')[0]
+                f=open(filename+'.orca','w')
+                f.write(func(i))
+                f.close()
+                li.append(filename+'.orca')
+	for i in li:
+		os.system('orcarun '+i+' '+mode)
 
-
-
+job()
 
