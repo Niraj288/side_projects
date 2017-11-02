@@ -1,5 +1,7 @@
 import subprocess
 import os
+import math
+import time
 
 d={}
 def save_coord(file,index):
@@ -16,11 +18,13 @@ def save_coord(file,index):
 			#print file[i]
 
 			an=file[i].strip().split()[1]
-			c=file[i].strip().split()[3:]
+			c=map(float,file[i].strip().split()[3:])
 			li.append([e[an]]+[c])
 	
 	return li
 
+def distance(a,b):
+    return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
 
 def coord(path):
 	file_o = open(path,'r')
@@ -36,23 +40,26 @@ def coord(path):
 		index+=1
 	return last 
 
-def charge_value(string):	
-	cords=string.strip().split('\n')
-	x1,y1,z1=cords[0].split()
-	x2,y2,z2=cords[1].split()
+def charge_value(lis,index,initial,diff,charge):	
+	dist=distance(lis[0][1],lis[1][1])
+	string=lis[0][0]+' 0 0 '+str(dist/2)+'\n'+lis[1][0]+' 0 0 '+str(-dist/2)+'\n\n'
+	string+='0 0 '+str(initial+index*diff)+' '+str(charge[0])+'\n'+'0 0 '+str(-initial-index*diff)+' '+str(charge[0])
+	return string
 
 
-def func(path):
+def func(path,index,initial,diff,charge):
 	filename=path.split('/')[-1].split('.')[0]
 	s0='%chk='+filename+'.chk'
 	s1="""
 %nprocshared=4
 %mem=10GB
-#p opt=Z-Matrix Charge NoSymm b2plyp empiricaldispersion=gd3bj int=superfine pop=nbo  genecp freq output=wfx
+#p opt=Z-Matrix Charge NoSymm b2plyp empiricaldispersion=gd3bj int=superfine genecp freq output=wfx density=current
 """
 	s2='\n'+filename+'\n\n'
-	s3=coord(path)+'\n\n'
-	s4=charge_value(s3)+'\n'
+	s3=coord(path)
+	s4=charge_value(s3,index,initial,diff,charge)+'\n'
+	print '\n\n Standard orientation \n **************************************************\n'+s4+'**************************************************\n\n'
+	s6=filename+'.wfx'+'\n\n'
 	s5=""" 
 I     0 
 S   9   1.00
@@ -312,22 +319,79 @@ g-ul potential
 2      5.41258500           -14.37552500 
 
 """
-	return s0+s1+s2+s3+s4
+	return s0+s1+s2+s4+s5+s6
 
-def job():
-	path=raw_input('Enter path : ')
-	ref=raw_input('Make all .g16.out files ?? (y/n) : ')
-	li=[]
-	for i in os.listdir(path):
-		if '.g16.out'==i[-8:]:
-			if ref=='y' or raw_input('Is the file '+i+' an input ?? (y/n) : ')=='y':
-				filename=i.split('.')[0]
-				f=open(filename+'.orca','w')
-				f.write(func(i))
-				f.close()
-				li.append(filename+'.orca')
+def check_(path):
+    file=open(path,'r')
+    file_=file.readlines()
+    file.close()
+    if 'Normal termination of Gaussian' not in file_[-1]:
+        return False
+    else:
+    	return True
 
 
+def check(filename):
+	f=filename+'.g16.out'
+	inde=1
+	print 'checking ...'
+	while True:
+		if inde%5==0:
+			print 'Time elspsed for '+f+' is '+str(inde)+' minutes ...'
+		try:
+			f=open(f,'r')
+			if check_(filename+'.g16.out'):
+				print 'Successful termination for '+filename+'\n'+'^^^^^^^^_________------------__________^^^^^^^^^^\n'
+				return True
+			else:
+				time.sleep(60)
+				inde+=1
+			f.close()
+		except IOError:
+			time.sleep(60)
+		inde+=1
 
 
-job()
+
+
+def job(path):
+	index,initial,diff,charge=1,2.5,0.2,[-0.5,-0.5]
+	for i in range (40):
+		filename='I2_charge'+'0'*(4-len(str(index)))+str(index)
+		f=open(filename+'.g16','w')
+		print 'Started calculation for '+filename+'  ...'
+		f.write(func(path,index,initial,diff,charge))
+		f.close()
+		#os.system('grun '+filename+'.g16 m2')
+		check(filename)
+		index+=1
+
+
+
+path='/Users/47510753/Documents/I2.g16.out'
+job(path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
