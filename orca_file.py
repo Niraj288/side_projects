@@ -18,6 +18,7 @@ def func(path):
 def job():
 	path=raw_input('Enter path : ')
 	ref=raw_input('Make all .g16.out files ?? (y/n) : ')
+	li=[]
 	for i in os.listdir(path):
 		if '.g16.out'==i[-8:]:
 			if ref=='y' or raw_input('Is the file '+i+' an input ?? (y/n) : ')=='y':
@@ -25,6 +26,7 @@ def job():
 				f=open(filename+'.orca','w')
 				f.write(func(i))
 				f.close()
+				li.append(filename+'.orca')
 
 
 
