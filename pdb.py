@@ -3,6 +3,8 @@ import scipy.spatial as spatial
 import time
 import math
 from math import log10, floor
+import os
+import sys
 
 def get_donars(arr_h,refe1,arr):
     point_tree = spatial.cKDTree(arr)
@@ -57,7 +59,7 @@ def data_extraction(path1,path2):
     refe_a,ra={},0
     coord={}
     for line in list2:
-        if len(line.strip().split())==0:
+        if len(line.strip().split())<4:
             continue
         s,x,y,z=line.strip().split()
         if s!='H':
@@ -122,8 +124,8 @@ def output(data):
         lis.append([a_id,li]) 
     return [lis,[n_heavy_pdb,n_light_pdb,n_heavy,n_light,h_count,refe_d,coord]]
 
-def write_o(out,d):
-    file=open('output.txt','w')
+def write_o(path1,out,d):
+    file=open(path1.split('/')[-1].split('.')[0]+'.txt','w')
     file.write('\n\n          ======================================================================\n')
     file.write('          ==                Possible number of hydrogen bonds :               ==\n')
     file.write('          ==                        Program H_BondCalc                        ==\n')
@@ -186,10 +188,47 @@ def write_o(out,d):
     file.write("...Termination of the program ....")
     file.close()
 
+def make_xyz(path):
+    f=open(path,'r')
+    lines=f.readlines()
+    f.close()
+    lis=''
+    ref=0
+    for line in lines:
+        if '#p ' in line:
+            ref+=1
+        if len(line.strip().split())==0:
+            ref+=1
+        if ref==6:
+            break
+        if ref==3 or ref==4:
+            ref+=1
+        if ref==5:
+            lis+=line
+    g=open(path[:-4]+'.xyz','w')
+    g.write(lis)
+    g.close()
+    return 1
 
-data=data_extraction('/Users/47510753/Downloads/for-niraj/1l2y.pdb','/Users/47510753/Downloads/for-niraj/for-script.com')
-out=output(data)
-write_o(out,data[0])
+'''
+files=os.listdir('.')
+path1,path2='',''
+for i in files:
+    if i[-4:]=='.com':
+        make_xyz(i)
+files=os.listdir('.')
+for i in files:
+    if i[-4:]=='.pdb':
+        path1=i 
+    if i[-4:]=='.xyz':
+        path2=i
+'''
+def job(path1,path2):
+    #path1=sys.argv[1]#path1 or raw_input('Enter pdb path : ')
+    #path2=sys.argv[2]#path2 or raw_input('Enter xyz path : ')
+    data=data_extraction(path1,path2)
+    out=output(data)
+    write_o(path1,out,data[0])
 
 
 
