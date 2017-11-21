@@ -22,7 +22,7 @@ def make_xyz(path):
 	g.write(lis)
 	g.close()
 	return 1
-
+'''
 if len(sys.argv)>1:
 	l=[sys.argv[1]]
 else:
@@ -31,3 +31,4 @@ else:
 for i in l:
 	if i[-4:]=='.com':
 		make_xyz(i)
+'''

@@ -13,7 +13,7 @@ def make_xyz(file):
             break
         if 'ATOM' in line.split()[0]: #use HETATM only when required
             print line
-            x,y,z=line.strip().split()[5:8]
+            x,y,z=line.strip().split()[6:9]
             s=line.strip().split()[-1]
             d[id]=[s,x,y,z]
             id+=1
@@ -87,7 +87,55 @@ def zmatrix(file):
     string+='\n'.join(li[6:])+'\n'
     return string 
 
+def get_ids(path):
+    f=open(path,'r')
+    lines=f.readlines()
+    f.close()
+    ref=0
+    st=''
+    for line in lines:
+        if ref==5:
+            break
+        if 'File format' in line:
+            ref=1
+        if len(line.strip().split())==0 and ref>0:
+            ref+=1
+        if ref==2 or ref==3:
+            ref+=1
+        if ref==4:
+            s,e=line.index('('),line.index(')')
+            l=line[s+1:e].split(',')
+            st+=l[0].strip()+' '+l[1].strip()+' 0 0 : '+line[e+1:].split()[0]+'\n'
+    return st
 
+
+def make_lmode(path):
+    #print 'performing step 1 ...'
+    ids=get_ids('output.txt')
+    filename=path.split('/')[-1].split('.')[0]
+    s1="""
+ $Contrl QCProg="gaussian"
+   iprint=0
+   isymm = 1
+ $end
+
+$qcdata
+ """
+    s2='fchk="'+filename+'.fchk"'
+    s3="""$end
+
+$LocMod $End
+"""
+    s4=ids
+    f=open(filename+'.alm','w')
+    f.write(filename+'\n')
+    f.write(s1)
+    f.write(' '+s2+'\n')
+    f.write(s3)
+    f.write(s4+'\n')
+    f.close()
+
+    os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm' +' >'+' '+filename+'.out')
 
 
 
