@@ -10,7 +10,10 @@ def get_donars(arr_h,refe1,arr):
     li_a={}
     for i in range (len(arr_h)):
         li1=(point_tree.query_ball_point(arr_h[i], 1.5))
-        li_a[i]=refe1[li1[0]]
+        if len(li1)==0:
+            pass
+        else:
+            li_a[i]=refe1[li1[0]]
     return li_a
 
 def round_sig(x, sig=2):
@@ -180,7 +183,7 @@ def write_o(path1,out,d):
         a,b=item 
         if file_ref:
             li1=[str(refe_d[a]),'[',str(d[a][4]),']',d[a][1],d[a][3],d[a][2]]
-            li1_test="{:>4} {}{:>3}{} {:>4} {:>13} {:>2}".format(*li1)
+            li1_test="{:>4} {}{:>4}{} {:>4} {:>13} {:>2}".format(*li1)
         else:
             li1=[str(refe_d[a]),str(d[a][4]),d[a][1],d[a][3],d[a][2]]
             li1_test="{:>4}{}{}{} {:>2}".format(*li1)
@@ -194,7 +197,7 @@ def write_o(path1,out,d):
             #print refe_d
             if file_ref:
                 li2=['[',str(d[k][4]),']',d[k][1],d[k][3],d[k][2],str(refe_d[k])]
-                li2_test="{}{:>3}{} {:>4} {:>13} {:>2} {:>4}".format(*li2)
+                li2_test="{}{:>4}{} {:>4} {:>13} {:>2} {:>4}".format(*li2)
                 est=[str(refe_d[a]),hid]
                 dist=str(round_sig(distance(coord[int(hid)],coord[refe_d[a]]),5))
                 lis_test=str(count)+'.',li2_test,hid,li1_test,str(refe_d[a]),hid,d[k][2]+'-H...'+d[a][2],dist+'\n'

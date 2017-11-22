@@ -25,7 +25,7 @@ def make_fchk(path):
 		if ref==4 or ref==5:
 			ref+=1
 		if ref==6:
-			lis=[str(float(i[:10])*0.529177) for i in line.strip().split()]
+			lis=[str((float(i.split('E')[0])*(10**int(i.split('E')[1])))*0.529177) for i in line.strip().split()]
 			cord+=lis
 		
 	cords=[]
@@ -33,7 +33,6 @@ def make_fchk(path):
 	g=open(path[:-5]+'.xyz','w')
 	while i < (len(cord)):
 		g.write(sym[s[ref]]+' '+' '.join(cord[i:i+3])+'\n')
-		print ' '.join(cord[i:i+3])
 		i+=3
 		ref+=1
 	g.close()

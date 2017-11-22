@@ -34,8 +34,7 @@ def lmode(filename):
 	make_lmode_file.make_alm(filename+'.txt','_dh')
 	addKaTopdb.addKa(filename+'.txt','_dh')
 
-def job():
-	path=sys.argv[1]
+def job(path):
 	li=path.split('/')[-1].split('.')
 	filename=li[0]
 	print 'Making xyz ...'
@@ -46,7 +45,9 @@ def job():
 	lmode(filename)
 	print 'Done!!'
 
-job()
+if __name__ == "__main__":
+	job(sys.argv[1])
+
 
 
 
