@@ -5,7 +5,7 @@ import sys
 import hbond_out
 import make_xl
 
-def make_excel(d):
+def make_excel(d,suffix):
 	bonds={}
 	b,f=[],[]
 	for i in d:
@@ -37,12 +37,18 @@ def make_excel(d):
 			r+=1
 			for k in lis:
 				sheet.write(r,c,float(k[0]))
-				sheet.write(r,c+1,float(k[1]))
+				if suffix=='_ah':
+					sheet.write(r,c+1,float(k[1]))
+				else:
+					sheet.write(r,c+1,float(k[2]))
 				r+=1
 			c+=2
 			
-		
-	wb.save('test_mode.xls')
+	if suffix=='_ah':	
+		wb.save('acceptors.xls')
+	else:
+		wb.save('donars.xls')
+
 
 
 
@@ -54,7 +60,8 @@ def make_output():
 			#hbond_out.job(i)
 			dic[i]=make_xl.xl(i.split('/')[-1].split('.')[0]+'.txt')
 			print '\n'
-	make_excel(dic)
+	make_excel(dic,'_ah')
+	make_excel(dic,'_dh')
 
 
 
