@@ -46,6 +46,7 @@ def make_xyz(path):
 	f.close()
 	lis=''
 	ref=0
+	sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
 	for line in lines:
 		if '#p ' in line:
 			ref+=1
@@ -56,7 +57,15 @@ def make_xyz(path):
 		if ref==3 or ref==4:
 			ref+=1
 		if ref==5:
-			lis+=line
+			list1=line.strip().split()
+			try:
+				if len(line.strip().split())==2:
+					lis+=line
+				else:
+					int(list1[0])
+					lis+=sym[list1[0]]+'  '+' '.join(list1[1:])+'\n'
+			except ValueError:
+				lis+=line
 	g=open(path[:-4]+'.xyz','w')
 	g.write(lis)
 	g.close()
