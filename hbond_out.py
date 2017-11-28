@@ -2,13 +2,13 @@ import os
 import sys
 import pdb
 import pdb1
-import com2xyz
+import module
 import make_lmode_file
 import addKaTopdb
 
 #give com file
 def xyz(filename,end):
-	com2xyz.make_xyz(filename+'.'+end)
+	module.make_xyz(filename+'.'+end)
 
 def hbonds(filename):
 	try:

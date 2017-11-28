@@ -58,18 +58,34 @@ def make_fchk(path):
         ref+=1
     g.close()
 
-def make_out(path):
+def make_out(path,sym):
     data = subprocess.check_output('gcartesian '+path, shell=True)
     g=open(path[:-4]+'.xyz','w')
-    g.write(data)
+    ref=0
+    for i in data:
+        if ref==1 and len(i.strip().split())==4:
+            li=i.strip().split()
+            try:
+                int(li[0])
+                g.write(sym[li[0]]+'  '+' '.join(li[1:])+'\n')
+            except KeyError:
+                g.write(' '.join(li)+'\n')
+        try:
+            int(i.strip().split()[0])
+            if len(i.strip())==2:
+                ref=1
+        except ValueError:
+            pass
+        #g.write(data)
     g.close()
 
 def make_xyz(path):
+    sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
     if path.split('.')[-1]=='fchk':
         make_fchk(path)
         return 2
     elif path.split('.')[-1]=='out':
-        make_out(path)
+        make_out(path,sym)
         return 3
     elif path.split('.')[-1]=='pdb':
         pdb_xyz(path)
@@ -79,7 +95,7 @@ def make_xyz(path):
     f.close()
     lis=''
     ref=0
-    sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
+    
     for line in lines:
         if '#p ' in line:
             ref+=1
