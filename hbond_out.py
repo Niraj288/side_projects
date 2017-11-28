@@ -36,9 +36,12 @@ def lmode(filename):
 
 def job(path):
 	li=path.split('/')[-1].split('.')
-	filename=li[0]
+	if len(li)>1:
+		filename='.'.join(li[:-1])
+	else:
+		filename=li[0]
 	print 'Making xyz ...'
-	xyz(filename,li[1])
+	xyz(filename,li[-1])
 	print 'Calculating H-Bonds ...'
 	hbonds(filename)
 	print 'Calculating local modes ...'
