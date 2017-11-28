@@ -1,5 +1,6 @@
 import os
-
+import sys
+import subprocess
 def pdb_xyz(file):
     f=open(file,'r')
     list1=f.readlines()
@@ -62,18 +63,19 @@ def make_out(path,sym):
     data = subprocess.check_output('gcartesian '+path, shell=True)
     g=open(path[:-4]+'.xyz','w')
     ref=0
-    for i in data:
+    for i in data.split('\n'):
         if ref==1 and len(i.strip().split())==4:
             li=i.strip().split()
             try:
                 int(li[0])
-                g.write(sym[li[0]]+'  '+' '.join(li[1:])+'\n')
+                g.write(sym[li[0]]+' '+' '.join(li[1:])+'\n')
             except KeyError:
                 g.write(' '.join(li)+'\n')
         try:
-            int(i.strip().split()[0])
-            if len(i.strip())==2:
-                ref=1
+	    if len(i.strip().split())>0:
+            	int(i.strip().split()[0])
+            	if len(i.strip().split())==2:
+                    ref=1
         except ValueError:
             pass
         #g.write(data)
@@ -233,7 +235,6 @@ $LocMod $End
     f.close()
 
     os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm' +' >'+' '+filename+'.out')
-
 
 
             
