@@ -64,7 +64,7 @@ def bfs(cstate,d,links_h,links_o,hbonds,obonds):
         	f.push([i,path+[cstate]])
         while True:
             if f.isEmpty():
-                return None
+                return []
             item=f.pop()
             if item[0] not in vs:
                 break
@@ -72,7 +72,7 @@ def bfs(cstate,d,links_h,links_o,hbonds,obonds):
         vs.add(item[0])
         ref+=1
         #print path,cstate
-    return None
+    return []
 
 def round_sig(x, sig=2):
     return round(x, sig-int(floor(log10(abs(x))))-1)
@@ -280,22 +280,56 @@ def write_o(graph,d):
 		print i/3,len(mers[i])
 	return mers 
 
-main_ring=[]
-def visual(rings,ring,d):
-	global main_ring
-	
+def check_ring(ring,ring_set):
+	temp=set(ring)
+	if temp not in ring_set:
+		ring_set.append(temp)
+		return True
+	return False
+
+
+def visual(rings,ring,d,ring_set,ax,links_o,links_h,coordinates):
+	for i in ring:
+		s,x,y,z=d[i]
+		if [x,y,z] in coordinates:
+			continue
+		else:
+			coordinates.append([x,y,z])
+		if s=='O':
+			a,b=links_o[i]
+			s1,x1,y1,z1=d[b]
+			ax.scatter(x1,y1,z1,c='b',marker='o')
+			s1,x1,y1,z1=d[a]
+			ax.scatter(x1,y1,z1,c='b',marker='o')
+			ax.scatter(x,y,z,c='r',marker='o')
+		else:
+			ax.scatter(x,y,z,c='b',marker='o')
+			a=links_h[i]
+			s1,x1,y1,z1=d[a[0]]
+			ax.scatter(x1,y1,z1,c='r',marker='o')
+			a,b=links_o[a[0]]
+			if a==i:
+				s1,x1,y1,z1=d[b]
+				ax.scatter(x1,y1,z1,c='b',marker='o')
+			else:
+				s1,x1,y1,z1=d[a]
+				ax.scatter(x1,y1,z1,c='b',marker='o')
+	check_ring(ring,ring_set)
+
 	X=[d[ring[0]][1]]
 	Y=[d[ring[0]][2]]
 	Z=[d[ring[0]][3]]
 
+	if [X[0],Y[0],Z[0]] not in coordinates:
+		coordinates.append([X[0],Y[0],Z[0]])
 	
 	for i in range (1,len(ring)):
 		if len(rings[ring[i]])<len(ring) and rings[ring[i]][1] not in ring:
-			print ring
-			x,y,z=visual(rings,rings[ring[i]],d)
-			X+=x
-			Y+=y 
-			Z+=z 
+			if 1 or check_ring(ring,ring_set):
+				x,y,z=visual(rings,rings[ring[i]],d,ring_set,ax,links_o,links_h,coordinates)
+				X+=x
+				Y+=y 
+				Z+=z 
 		else:
 			X+=[d[ring[i]][1]]
 			Y+=[d[ring[i]][2]]
@@ -303,7 +337,7 @@ def visual(rings,ring,d):
 	X+=[d[ring[0]][1]]
 	Y+=[d[ring[0]][2]]
 	Z+=[d[ring[0]][3]]
-
+	print len(ring_set)
 	return X,Y,Z 
 	
 	'''
@@ -315,7 +349,6 @@ def visual(rings,ring,d):
 			ax.scatter(x, y, z, c='blue',marker='^')
 		ax.text(x,y,z,i)
 	'''
-	
 
 def data_extraction(path,pdb_ref):
 	file = open(path,'r')
@@ -401,18 +434,22 @@ def data_extraction(path,pdb_ref):
 	
 	'''
 	
+	main_ring=[]
 	for i in rings:
 		ring=rings[i]
 		if ring!=None:
-			print len(ring)
-		if ring!=None and len(ring)==18:
-			main_ring=ring 
-			print main_ring
-			fig = plt.figure()
-			ax = fig.add_subplot(111, projection='3d')
-			X,Y,Z=visual(rings,ring,d)
-			ax.plot(X,Y,Z,marker='^')
-			plt.show()
+			pass
+			#print len(ring)
+		if ring!=None and len(ring)/2==4:
+			if set(ring) not in main_ring:
+				main_ring.append(set(ring))
+				ring_set=[]
+				print '********'
+				fig = plt.figure()
+				ax = fig.add_subplot(111, projection='3d')
+				X,Y,Z=visual(rings,ring,d,ring_set,ax,links_o,links_h,[])
+				ax.plot(X,Y,Z,marker='o')
+				plt.show()
 
 	#d2=boundary(d)
 	#d3=cross_check(hbonds,d2)

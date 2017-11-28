@@ -4,7 +4,7 @@ import os
 
 def xyz_value(path):
 	data = subprocess.check_output('gcartesian '+path, shell=True)
-	return '* xyz '+data
+	return '* xyz '+data+'\n'
 
 def func(path):
 	s0='! DLPNO-CCSD(T) ECP{aug-cc-pVTZ-PP} aug-cc-pVTZ AutoAux TightSCF XYZFile PModel\n'
@@ -39,4 +39,3 @@ def job():
 		os.system('orcarun '+i+' '+mode)
 
 job()
-
