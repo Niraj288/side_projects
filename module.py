@@ -92,6 +92,8 @@ def make_xyz(path):
     elif path.split('.')[-1]=='pdb':
         pdb_xyz(path)
         return 4
+    elif path.split('.')[-1]=='xyz':
+        return 5
     f=open(path,'r')
     lines=f.readlines()
     f.close()
