@@ -58,8 +58,8 @@ $LocMod $End
 	f.write(s3)
 	f.write(s4+'\n')
 	f.close()
-
-	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
+	#/Users/47510753/Downloads/LocalMode-2016/lmodes.exe
+	os.system("lmode -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
 
 '''
 lis=os.listdir('.')
