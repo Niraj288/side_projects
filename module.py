@@ -81,16 +81,36 @@ def make_out(path,sym):
         #g.write(data)
     g.close()
 
+def filter_xyz(path,suf):
+    path=path[:-suf]+'.xyz'
+    f=open(path,'r')
+    lines=f.readlines()
+    f.close()
+
+    g=open(path,'w')
+    index=0
+    for line in lines:
+        if len(line.strip().split())==4:
+            index+=1
+
+    g.write(str(index)+'\n')
+    g.write('comment\n')
+    g.write(''.join(lines))
+    g.close()
+
 def make_xyz(path):
     sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
     if path.split('.')[-1]=='fchk':
         make_fchk(path)
+        filter_xyz(path,5)
         return 2
     elif path.split('.')[-1]=='out':
         make_out(path,sym)
+        filter_xyz(path,4)
         return 3
     elif path.split('.')[-1]=='pdb':
         pdb_xyz(path)
+        filter_xyz(path,4)
         return 4
     elif path.split('.')[-1]=='xyz':
         return 5
