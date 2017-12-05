@@ -23,13 +23,12 @@ def pdb_xyz(file):
         g.write('  '.join(d[i])+'\n')
     g.close()
 
-def make_fchk(path):
+def make_fchk(path,sym):
     f=open(path,'r')
     lines=f.readlines()
     f.close()
     s,cord=[],[]
     ref=0
-    sym={'14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
     for line in lines:
         if 'Number of symbols in /Mol/' in line:
             break
@@ -99,9 +98,11 @@ def filter_xyz(path,suf):
     g.close()
 
 def make_xyz(path):
-    sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F'}
+    if os.system('babel '+path+' '+path.split('.')[0]+'.xyz')==0:
+        return 0
+    sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F','16':'S'}
     if path.split('.')[-1]=='fchk':
-        make_fchk(path)
+        make_fchk(path,sym)
         filter_xyz(path,5)
         return 2
     elif path.split('.')[-1]=='out':

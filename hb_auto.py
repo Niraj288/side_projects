@@ -44,6 +44,7 @@ def make_excel(d,suffix):
 				r+=1
 			c+=2
 			
+	print 'Making Excel files ...'		
 	if suffix=='_ah':	
 		wb.save('acceptors.xls')
 	else:
@@ -57,7 +58,7 @@ def make_output():
 	for i in os.listdir(sys.argv[1]):
 		if i[-5:]=='.fchk':
 			print 'Procession the file '+i
-			#hbond_out.job(i)
+			hbond_out.job(i)
 			dic[i]=make_xl.xl(i.split('/')[-1].split('.')[0]+'.txt')
 			print '\n'
 	make_excel(dic,'_ah')

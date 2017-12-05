@@ -86,7 +86,7 @@ def data_extraction(path1,path2):
     ref=1
     refe_a,ra={},0
     coord={}
-    for line in list2:
+    for line in list2[2:]:
         if len(line.strip().split())<4:
             continue
         s,x,y,z=line.strip().split()

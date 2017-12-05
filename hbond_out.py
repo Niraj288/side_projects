@@ -2,15 +2,22 @@ import os
 import sys
 import pdb
 import pdb1
+import pdb_c
 import module
 import make_lmode_file
 import addKaTopdb
 
 #give com file
 def xyz(filename,end):
-	module.make_xyz(filename+'.'+end)
+	print 'Exit status :',module.make_xyz(filename+'.'+end)
 
 def hbonds(filename):
+	if '-c' in sys.argv:
+		print 'Using xyz file ...'
+		print 'Considering C-H...O bonds ...'
+		pdb_c.job(filename+'.xyz')
+		print 'Success using xyz.'
+		return
 	try:
 		print 'Using pdb ...' 
 		f=open(filename+'.pdb','r')
