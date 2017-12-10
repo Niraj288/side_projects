@@ -195,7 +195,7 @@ def write_o(path1,out,d):
                 continue
             if d[a][2]=='S' and dist < 3.5:
                 continue
-            if distance(coord[refe_d[a]],coord[refe_d[k]]) < 3.0:
+            if distance(coord[refe_d[a]],coord[refe_d[k]]) < 2.0:
                 continue
             count+=1
             c=d[k][3]+'-'+d[a][3]
