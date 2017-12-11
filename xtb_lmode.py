@@ -57,7 +57,6 @@ def lmode():
    iprint=0
    isymm = 1
    ifsave=.false.
-   ifmolden=.true.
  $end
 
 $qcdata
