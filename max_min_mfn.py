@@ -16,8 +16,9 @@ def max_min(path):
 			l=line.strip().split()
 			if len(l)==0:
 				ref=0
+				continue
 			if '*' in line:
-				l=[1:]
+				l=l[1:]
 				_n.append([l[2],l[4:7]])
 			min.append([l[2],l[4:7]])
 		if ref==5 or ref==6:
@@ -27,12 +28,12 @@ def max_min(path):
 			if len(l)==0:
 				break
 			if '*' in line:
-				l=[1:]
+				l=l[1:]
 				_x.append([l[2],l[4:7]])
 			max.append([l[2],l[4:7]])
 		if 'The number of surface minima' in line:
 			ref=1
-		if 'The number of surface minima' in line:
+		if 'The number of surface maxima' in line:
 			ref=5
 	return max,min,_x,_n
 
