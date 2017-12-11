@@ -13,6 +13,38 @@ def sub_s(lis):
 		ref+=1
 	return sub_s
 
+def get_ids(path,suffix):
+	f=open(path,'r')
+	lines=f.readlines()
+	f.close()
+	ref=0
+	st=''
+	for line in lines:
+		if ref==5:
+			break
+		if 'File format' in line:
+			ref=1
+		if len(line.strip().split())==0 and ref>0:
+			ref+=1
+		if ref==2 or ref==3:
+			ref+=1
+		if ref==4:
+			if suffix=='_dh':
+				
+				if '[' in line:
+					l=line.strip().split()
+					st+=l[6]+' '+l[8]+' 0 0 : '+l[-3]+'\n'
+				else:
+					l=line.strip().split()
+					st+=l[2]+' '+l[4]+' 0 0 : '+l[-3]+'\n'
+			else:
+				#for acceptor-hydrogen calculation
+				s,e=line.index('('),line.index(')')
+				l=line[s+1:e].split(',')
+				st+=l[0].strip()+' '+l[1].strip()+' 0 0 : '+line[e+1:].split()[0]+'\n'
+			
+	return st
+
 def make_dat(path):
 	filename=path[:-4]+'.xyz'
 	h=open('hessian','r')
@@ -47,7 +79,7 @@ def make_dat(path):
 	g.write(s)
 	g.close()
 
-def lmode():
+def make_alm(path,suffix):
 	make_dat(sys.argv[1])
 	path=sys.argv[1]
 	filename=path.split('/')[-1].split('.')[0]
@@ -65,22 +97,20 @@ $qcdata
  	s3="""$end
 
 $LocMod $End
-1 2 0 0 : W1-R1
-
 """
-	f=open(filename+'.alm','w')
+	f=open(filename+suffix+'.alm','w')
 	f.write(filename+'\n')
 	f.write(s1)
 	f.write(' '+s2+'\n')
 	f.write(s3+'\n')
+	f.write(get_ids(path.split('/')[-1].split('.')[0]+'.txt',suffix))
 	f.close()
 
-	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm' +' >'+' '+filename+'.out')
+	os.system("lmode -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
 	
 
 
 	
-lmode()
 
 
 

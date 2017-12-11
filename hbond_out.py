@@ -6,6 +6,7 @@ import pdb_c
 import module
 import make_lmode_file
 import addKaTopdb
+import xtb_lmode
 
 #give com file
 def xyz(filename,end):
@@ -35,11 +36,18 @@ def hbonds(filename):
 		pdb1.job(filename+'.xyz')
 		print 'Success using xyz.'
 
-def lmode(filename):
-	make_lmode_file.make_alm(filename+'.txt','_ah')
-	addKaTopdb.addKa(filename+'.txt','_ah')
-	make_lmode_file.make_alm(filename+'.txt','_dh')
-	addKaTopdb.addKa(filename+'.txt','_dh')
+def lmode(filename,software='gaussian'):
+	if software=='xtb':
+		print 'Using xtb output '
+		xtb_lmode.make_alm(filename+'.txt','_ah')
+		addKaTopdb.addKa(filename+'.txt','_ah')
+		xtb_lmode.make_alm(filename+'.txt','_dh')
+		addKaTopdb.addKa(filename+'.txt','_dh')
+	else:
+		make_lmode_file.make_alm(filename+'.txt','_ah')
+		addKaTopdb.addKa(filename+'.txt','_ah')
+		make_lmode_file.make_alm(filename+'.txt','_dh')
+		addKaTopdb.addKa(filename+'.txt','_dh')
 
 def job(path):
 	li=path.split('/')[-1].split('.')
