@@ -47,7 +47,8 @@ def get_ids(path,suffix):
 
 def make_dat(path):
 	filename=path[:-4]+'.xyz'
-	h=open('hessian','r')
+	#print filename[:-4]+'_hessian'
+	h=open(filename[:-4]+'_hessian','r')
 	hess0=h.readlines()[1:]
 	h.close()
 	hess=[]
@@ -68,7 +69,7 @@ def make_dat(path):
 		za.append(str(sym[s]))
 		xyz+=[x,y,z]
 
-	g=open('almode.dat','w')
+	g=open(filename[:-4]+'.dat','w')
 	s=''
 	s+='Eventually the world will end in singularity !! \n'
 	s+='NATM\n   '+lines[0].strip().split()[0]+'\nAMASS'+sub_s(amass)
@@ -93,7 +94,7 @@ def make_alm(path,suffix):
 
 $qcdata
  """
- 	s2='fchk="almode.dat"'
+ 	s2='fchk="'+filename+'.dat"'
  	s3="""$end
 
 $LocMod $End
@@ -102,7 +103,7 @@ $LocMod $End
 	f.write(filename+'\n')
 	f.write(s1)
 	f.write(' '+s2+'\n')
-	f.write(s3+'\n')
+	f.write(s3)
 	f.write(get_ids(path.split('/')[-1].split('.')[0]+'.txt',suffix))
 	f.close()
 
