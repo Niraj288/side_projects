@@ -60,7 +60,10 @@ def job(path):
 	print 'Calculating H-Bonds ...'
 	hbonds(filename)
 	print 'Calculating local modes ...'
-	lmode(filename)
+	if '-xtb' in sys.argv:
+		lmode(filename,'xtb')
+	else:
+		lmode(filename)
 	print 'Done!!'
 
 if __name__ == "__main__":

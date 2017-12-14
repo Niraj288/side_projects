@@ -25,8 +25,8 @@ def xl(path):
 				float(ls[-1])
 				b,bl,ka1,ka2=line.strip().split()[-4:]
 			except ValueError:
-				b,bl,ka1,ka2=line.strip().split()[-5:len(ls)-1]
-				b+=ls[-1]
+				bl,ka1,ka2=line.strip().split()[-4:len(ls)-1]
+				b=ls[-5]+'_'+ls[-1]
 			if b in d:
 				d[b].append([bl,ka1,ka2])
 			else:
