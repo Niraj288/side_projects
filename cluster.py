@@ -7,7 +7,7 @@ from matplotlib import style
 style.use("ggplot")
 
 def cluster(X):
-  ms = MeanShift(cluster_all=1)
+  ms = MeanShift(bandwidth=5)
   ms.fit(X)
   labels = ms.labels_
   cluster_centers = ms.cluster_centers_
@@ -16,7 +16,7 @@ def cluster(X):
   n_clusters_ = len(np.unique(labels))
   print("Number of estimated clusters:", n_clusters_)
 
-  colors = 10*['r','g','b','c','k','y','m']
+  colors = 100*['r','g','b','c','k','y','m']
   fig = plt.figure()
   ax = fig.add_subplot(111, projection='3d')
 
@@ -28,8 +28,32 @@ def cluster(X):
 
   plt.show()
 
-def data():
-  X, _ = make_blobs(n_samples = 100, centers = 10 ,n_features=3)
+def data_extraction(path,pdb_ref):
+  file = open(path,'r')
+  lines=file.readlines()
+  file.close()
+  X=[]
+  if pdb_ref==0:
+    inde1,inde2=2,6
+  else:
+    inde1,inde2=0,1
+  for line in lines:
+    if len(line.strip().split())<4:
+      continue
+    if 'O' in line.strip().split()[inde1]:
+      x,y,z=map(float,line.strip().split()[inde2:inde2+3])
+      X.append([x,y,z])
+      
+    elif pdb_ref==0 and 'H'==line.strip().split()[inde1][0]:
+      x,y,z=map(float,line.strip().split()[inde2:inde2+3])
+      X.append([x,y,z])
+    elif pdb_ref==1 and 'H'==line.strip().split()[inde1]:
+      x,y,z=map(float,line.strip().split()[inde2:inde2+3])
+      X.append([x,y,z])
+  return X
+
+def data(path,pdb_ref=0):
+  X=data_extraction(path,pdb_ref)
   return X 
 
-cluster(data())
+cluster(data('/Users/47510753/Downloads/water_test.com',1))
