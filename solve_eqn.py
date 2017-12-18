@@ -3,6 +3,7 @@ import sys
 
 def get_data(path):
 	d=np.load(path).item()
+	print d
 	files=[]
 	qa,qw,y=[],[],[]
 	for i in d:
@@ -16,11 +17,11 @@ def get_data(path):
 def solve(path,inde):
 	lis=get_data(path)
 	X,Y=[],[]
-	for i in range (inde,inde+3):
+	for i in range (inde,inde+6):
 		qa=lis[1][i]
 		qw=lis[2][i]
 		x1,x2,x3,x4,x5,x6=qa**2,qw**2,qa*qw,qa,qw,1
-		X.append([x4,x5,x6])
+		X.append([x1,x2,x3,x4,x5,x6])
 		Y.append([lis[3][i]])
 	
 	x = np.array(X)
@@ -43,7 +44,7 @@ def predict(path,inde):
 			#print temp[j],coeff[j][0]
 			res+=(temp[j]*coeff[j][0])
 		avg_err+=((res-y)/y)*100
-		#print name,'predicted,actual',res,y,'; error is',int(((res-y)/y)*100),'%',float(res-y)
+		print name,'predicted,actual',res,y,'; error is',int(((res-y)/y)*100),'%',float(res-y)
 	print 'Overall average error : ',int(avg_err/len(lis[0]))
 	return int(avg_err/len(lis[0]))
 
