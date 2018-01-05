@@ -101,6 +101,17 @@ def amide_fit(data):
 		y+=[[float(f)]]
 	prin(X,y,file)
 
+def phenol_fit(data):
+	X,y=[],[]
+	file=[]
+	for i in data:
+		file.append(i.split('/')[-1])
+		a,b,f=data[i]
+		a1,b1=a[-1],b[-1]
+		X+=[[a1**2,b1**2,a1*b1,a1,b1]]
+		y+=[[float(f)]]
+	prin(X,y,file)
+
 def calc(data):
 	pka=np.load('/'.join(sys.argv[0].split('/')[:-1])+'/pka.npy').item()
 	d=np.load(data).item()
@@ -119,7 +130,8 @@ def calc(data):
 		if raw_input('Save data : ')=='y':
 			np.save('/'.join(sys.argv[0].split('/')[:-1])+'/pka.npy',pka)
 	#amide_fit(d)
-	make_fit(d)
+	#make_fit(d)
+	phenol_fit(d)
 
 calc(sys.argv[1])
 #add_data(sys.argv[1])
