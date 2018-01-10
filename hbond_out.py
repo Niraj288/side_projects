@@ -57,6 +57,7 @@ def job(path):
 		filename=li[0]
 	print 'Making xyz ...'
 	xyz(filename,li[-1])
+	
 	print 'Calculating H-Bonds ...'
 	hbonds(filename)
 	print 'Calculating local modes ...'
