@@ -3,10 +3,13 @@ import sys
 
 def get_data(path):
 	d=np.load(path).item()
+	print 123
 	print d
 	files=[]
 	qa,qw,y=[],[],[]
 	for i in d:
+		if i.split('/')[-1]=='B_4NO2_5NO2.out':
+			continue
 		files.append(i.split('/')[-1])
 		qa.append((d[i][0][2]+d[i][1][2])/2)
 		qw.append(d[i][2][2])
