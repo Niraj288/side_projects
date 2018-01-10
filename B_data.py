@@ -25,6 +25,27 @@ def add_pka(data,name):
 	if raw_input('Save : ')=='y':
 		np.save(name,ne)
 
+def add_pka_manually(data,name):
+	f=open('res.txt','r')
+	lines=f.readlines()
+	f.close()
+	ne={}
+	
+	for line in lines:
+		nam=line.strip().split()
+		ne[nam[4].split('/')[-1]]=data[nam[4]]+[nam[6]]
+	print ne
+	'''
+	for i in data:
+		if '.g16' in i:
+			continue
+		ne[i]=data[i]+[float(raw_input('Enter pka : for '+i+' : '))]
+	print ne 
+	'''
+	if raw_input('Save : ')=='y':
+		np.save(name,ne)
+
+
 def make_excel(data,name):
 	wb=xlwt.Workbook() 
 	sheet = wb.add_sheet('Version1')
@@ -35,6 +56,8 @@ def make_excel(data,name):
 	sheet.write(0,4,'pKa')
 	row=1
 	for i in data:
+		if i in ['R_2-C2H5-Ar.out','R_CH2Br.out']:
+			continue
 		col=0
 		a,b,c,d=data[i]
 		sheet.write(row,col,i.split('/')[-1])
@@ -59,15 +82,17 @@ def make_fit1(data):
 	file=[]
 	#ne={}
 	for i in data:
+		if i in ['R_2-C2H5-Ar.out','R_CH2Br.out']:
+			continue
 		file.append(i.split('/')[-1])
 		a,b,c,d=data[i]
 		#d=data2[i][-1]
 		#data[i].append(d)
 		#ne[i]=data[i]
-		a1=(a[-1]+b[-1])/2
-		b1=c[-1] 
+		a1=(float(a[-1])+float(b[-1]))/2
+		b1=float(c[-1]) 
 		X+=[[a1**2,b1**2,a1*b1,a1,b1]]
-		y+=[[d]]
+		y+=[[float(d)]]
 		#avg=(a[-1]+b[-1])/2
 		#plt.plot(avg,d,'ro')
 	'''
@@ -120,6 +145,5 @@ def make_fit2(data):
 	for i in range (len(y)):
 		predi=str(round(((pr[i][0]-y[i][0])/y[i][0])*100,2))+' %'
 		print file[i]+' '*(20-len(file[i])),' '*(20-len(predi))+ predi, ' '*(20-len(str(y[i][0])))+str(y[i][0]) , ' '*(20-len(str(round(pr[i][0],2))))+str(round(pr[i][0],2)),' '*(20-len(str(round((y[i][0]-pr[i][0]),4))))+str(round((y[i][0]-pr[i][0]),4))
-
 
 make_fit1(data)
