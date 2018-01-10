@@ -19,4 +19,3 @@ def symbol_dict(path):
 		num=i+1
 		symbol[fd[num]['symbol']]=num
 	return symbol
-

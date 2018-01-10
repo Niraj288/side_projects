@@ -143,6 +143,7 @@ def make_xyz(path):
     g=open(path[:-4]+'.xyz','w')
     g.write(lis)
     g.close()
+    filter_xyz(path,4)
     return 1
 
 def zmatrix(file):
