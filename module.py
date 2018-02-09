@@ -10,7 +10,7 @@ def pdb_xyz(file):
     for line in list1:
         if len(line.strip().split())==0:
             continue
-        if "END" in line.split()[0]:
+        if "TER" in line.split()[0]:
             break
         if 'ATOM' in line.split()[0]: #use HETATM only when required
             print line
@@ -98,7 +98,7 @@ def filter_xyz(path,suf):
     g.close()
 
 def make_xyz(path):
-    if os.system('babel '+path+' '+path.split('.')[0]+'.xyz')==0:
+    if path.split('.')[-1]!='pdb' and os.system('babel '+path+' '+path.split('.')[0]+'.xyz')==0:
         return 0
     sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F','16':'S'}
     if path.split('.')[-1]=='fchk':

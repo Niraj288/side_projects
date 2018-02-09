@@ -68,7 +68,8 @@ def data_extraction(path1,path2):
                 break
             if 'ATOM' in line.split()[0] or 'HETATM' in line.split()[0]: #use HETATM only when required
                 #print line
-                id,at,rt,_,_0,x,y,z,_2,_3,s=line.strip().split()[1:]
+                id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
+                s=line.strip().split()[-1]
                 d[int(id)]=[at,rt,s,chain(s,at),_0]
                 if rt=='HOH':
                     d[int(id)][3]='Water'

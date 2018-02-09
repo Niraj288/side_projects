@@ -45,9 +45,10 @@ def data_extraction(path1,path2):
     for line in list1:
         if "TER" in line.split()[0]:
             break
-        if 'ATOM' in line.split()[0]:
+        if line.split()[0] in ['ATOM','HETATM']:
             #print line
-            id,at,rt,_,_0,x,y,z,_2,_3,s=line.strip().split()[1:]
+            id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
+            s=line.strip().split()[-1]
             d[int(id)]=[at,rt,s,chain(s,at),_0]
             l+=1
             if s=='H':
@@ -154,7 +155,7 @@ def write_o(path1,out,d):
     for item in out[0]:
         a,b=item
         li1=[str(refe_d[a]),'[',str(d[a][4]),']',d[a][1],d[a][3],d[a][2]] 
-        li1_test="{:>4} {}{:>4}{} {:>4} {:>13} {:>2}".format(*li1)
+        li1_test="{:>6} {}{:>6}{} {:>6} {:>15} {:>3}".format(*li1)
         for i in b:
             j,k=i 
             hid=str(j)
@@ -163,11 +164,11 @@ def write_o(path1,out,d):
             count+=1
             c=d[k][3]+'-'+d[a][3]
             li2=['[',str(d[k][4]),']',d[k][1],d[k][3],d[k][2],str(refe_d[k])]
-            li2_test="{}{:>4}{} {:>4} {:>13} {:>2} {:>4}".format(*li2)
+            li2_test="{}{:>6}{} {:>6} {:>15} {:>3} {:>6}".format(*li2)
             est=[str(refe_d[a]),hid]
             dist=str(round_sig(distance(coord[int(hid)],coord[refe_d[a]]),5))
             lis_test=str(count)+'.',li2_test,hid,li1_test,str(refe_d[a]),hid,d[k][2]+'-H...'+d[a][2],dist+'\n'
-            st_test="{:>4}  {:>30} ,{:>4} ,{:>24} ({:>4} ,{:>4}) {:>8}  {:>6}".format(*lis_test)
+            st_test="{:>6}  {:>30} ,{:>6} ,{:>26} ({:>6} ,{:>6}) {:>8}  {:>6}".format(*lis_test)
             st0=st_test
             db=d[k][2]+'-H...'+d[a][2]
             if c not in st_d:
