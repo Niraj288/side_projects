@@ -7,6 +7,7 @@ import module
 import make_lmode_file
 import addKaTopdb
 import xtb_lmode
+import time
 
 #give com file
 def xyz(filename,end):
@@ -59,11 +60,14 @@ def job(path):
 	xyz(filename,li[-1])
 	
 	print 'Calculating H-Bonds ...'
+	curr=time.time()
 	hbonds(filename)
-	print 'Calculating local modes ...'
-	if '-xtb' in sys.argv:
+	print 'Calculation done in',time.time()-curr,'seconds'
+	if '-xtb' in sys.argv and '-l' in sys.argv:
+		print 'Calculating local modes for stb files ...'
 		lmode(filename,'xtb')
-	else:
+	elif '-l' in sys.argv:
+		print 'Calculating local modes ...'
 		lmode(filename)
 	print 'Done!!'
 

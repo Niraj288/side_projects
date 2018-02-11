@@ -6,6 +6,8 @@ import time
 import math
 from math import log10, floor
 import copy
+from matplotlib import style
+style.use("ggplot")
 
 class Queue:
     def __init__(self):
@@ -440,7 +442,7 @@ def data_extraction(path,pdb_ref):
 		if ring!=None:
 			pass
 			#print len(ring)
-		if ring!=None and len(ring)/2==4:
+		if ring!=None and len(ring)/2==80:
 			if set(ring) not in main_ring:
 				main_ring.append(set(ring))
 				ring_set=[]
