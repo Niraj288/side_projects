@@ -28,7 +28,7 @@ def sort_distance(data,ref):
 
 
 
-def process(data):
+def process(data,size):
 	M=0
 	for i in data:
 		M+=float(i[0])
@@ -44,8 +44,16 @@ def process(data):
 	distance_matrix=[]
 	for i in pre_list:
 		distance_matrix.append(sort_distance(data,i))
-	return distance_matrix
+	a,b=size
+	a1=len(distance_matrix)
+	for i in range (a):
+		if i>=a1:
+			distance_matrix.append([-1]*a)
+		else:
+			for j in range (a1-1,b-1):
+				distance_matrix[i].append(-1)
+	return np.array(distance_matrix)
 
 
-
-print process(data)
+if __name__=='__main__':
+	print process(data,[6,6])
