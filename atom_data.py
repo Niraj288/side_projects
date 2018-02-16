@@ -2,6 +2,8 @@ import sys
 
 def data(path):
 	path='/'.join(path.split('/')[:-1])+'/data.json'
+	if path=='/data.json':
+		path='data.json'
 	f=open(path,'r')
 	lines=f.readlines()
 	f.close()
