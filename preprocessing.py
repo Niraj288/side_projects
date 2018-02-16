@@ -17,8 +17,8 @@ def sort_distance(data,ref):
 	lis=[]
 	for i in  range (len(data)):
 		r=distance(data[i][1:],ref[1:])
-		if r==0:
-			lis.append(r)
+		if r==0.0:
+			lis.append(r)#data[i][0])
 		else:
 			#lis.append(r)
 			lis.append((data[i][0]*ref[0])/r**2)
@@ -29,6 +29,12 @@ def make_image(my_list,name):
 	pixels=[]
 	img = Image.new('L', (len(my_list), len(my_list[0])))
 	print (len(my_list), len(my_list[0]))
+	ma=-999999
+	for i in range (len(my_list)):
+		m=max(my_list[i])
+		if m>ma:
+			ma=m 
+
 	for i in range (len(my_list)):
 		for j in range (len(my_list[i])):
 			if my_list[i][j] in [-1]:
@@ -37,7 +43,8 @@ def make_image(my_list,name):
 			elif my_list[i][j]==0.0:
 				img.putpixel((i,j),0)
 			else:
-				img.putpixel((i,j),int((my_list[i][j]*1000)%255))	
+				img.putpixel((i,j),int((my_list[i][j]/ma)*255))	
+				#print int((my_list[i][j]/ma)*255)
 	img.save(name+'.png')
 
 def process(data,size):
@@ -70,6 +77,32 @@ def process(data,size):
 
 
 if __name__=='__main__':
-	data=[[1,-1,1,0,2],[1,1,1,0,1],[3,0,2,0,1],[4,1,1,1,1]]
-	process(data,[6,6])
+	f=open(sys.argv[1],'r')
+	lines=f.readlines()
+	f.close()
+	data=[]
+	for i in lines:
+		if len(i.strip().split())==4:
+			data.append(map(float,i.strip().split()))
+	print data
+	#data=[[1,-1,1,0,2],[1,1,1,0,1],[3,0,2,0,1],[4,1,1,1,1]]
+	make_image(process(data,[12,12]),'0_3.png')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
