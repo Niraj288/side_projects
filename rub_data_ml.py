@@ -46,9 +46,9 @@ def get_Xy(path,index):
 
 def prin(X,y,file):
 	t=100
-	clf = MLPRegressor(solver='adam',activation='relu')#,hidden_layer_sizes=(3,))
+	clf = MLPRegressor(solver='lbfgs',activation='relu')#,hidden_layer_sizes=(3,))
 	#clf = LinearRegression()
-	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.00001)
+	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.01)
 	clf.fit(X_train, y_train)
 
 	accuracy = clf.score(X_train,y_train)
@@ -89,12 +89,24 @@ def flat_X(X):
 #d={}
 #d['X']=X 
 #d['y']=Y 
+def add_electron(X):
+	d=atom_data.data(sys.argv[0])
+	for i in range (len(X)):
+		#print X[i]#d[X[i][0]]#['electronegativity']
+		for j in range (len(X[i])):
+			X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
+	
+	return X
+
+
 d=np.load('rubb_data.npy').item()
 #X,y=d['X'],[float(xi[16]) for xi in d['y'] ]
-for i in range (16,17):
+for i in range (1):
 	print i
+	t=3000
 	#X,y=d['X'][:-2000],[float(xi[i])*627.51 for xi in d['y'][:-2000] ]
-	X,y=d['X'],[float(xi[i])*627.51 for xi in d['y'] ]
+	X,y=d['X'][:t],[float(xi[13])*627.51 for xi in d['y'][:t] ]
+	X=add_electron(X)
 	'''
 	train=X
 	clf = IsolationForest(max_samples = 100, random_state = 42)
@@ -112,11 +124,11 @@ for i in range (16,17):
 		if y[j] > 30000:
 			print y[j],j
 	'''
-	X=process(X,[50,50])
+	X=process(X,[30,30])
 	#d['X_processed']=X 
 	#np.save('rubb_data.npy',d)
+	
 	print len(X)
-	X=flat_X(X)
 	X=ps.scale(X)
 
 
