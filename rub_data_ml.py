@@ -55,6 +55,7 @@ def prin(X,y,file):
 	#MSE=clf.mean_squared_error(X_train,y_train)
 	print 'accuracy',accuracy,'\n'
 	print 'MSE',metrics.mean_squared_error(y,clf.predict(X))
+	print 'MAE',metrics.mean_absolute_error(y,clf.predict(X))
 	#X_test,y_test=X[-t:],y[-t:]
 	#file=file[-t:]
 	pr=clf.predict(X_test)
@@ -89,6 +90,29 @@ def flat_X(X):
 #d={}
 #d['X']=X 
 #d['y']=Y 
+def add_valance(d,atomNumber):
+	st=d[atomNumber]['electronicConfiguration']
+	d_v={'s':2,'p':6,'d':10,'f':18}
+	res=0
+	for i in range (len(st)-1):
+
+		if st[i] in d_v:
+			
+			st0=''
+			j=i+1 
+			while j<len(st):
+				#print 'hola',st[j],i
+				try:
+					int(st[j])
+					st0+=st[j]
+				except ValueError:
+					break
+				j+=1
+			if d_v[st[i]]>int(st0):
+				res+=int(st0)
+	#print atomNumber,st,res 
+	return res 
+
 def add_electron(X):
 	d=atom_data.data(sys.argv[0])
 	for i in range (len(X)):
@@ -97,6 +121,10 @@ def add_electron(X):
 			X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
 			X[i][j].append(float(d[int(X[i][j][0])]['atomicMass'][:3]))
 			X[i][j].append(d[int(X[i][j][0])]['electronAffinity'])
+			X[i][j].append(d[int(X[i][j][0])]['ionizationEnergy'])
+			X[i][j].append(d[int(X[i][j][0])]['vanDelWaalsRadius'])
+			X[i][j].append(d[int(X[i][j][0])]['atomicRadius'])
+			X[i][j].append(add_valance(d,int(X[i][j][0])))
 	
 	return X
 
