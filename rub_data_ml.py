@@ -48,7 +48,7 @@ def prin(X,y,file):
 	t=100
 	clf = MLPRegressor(solver='lbfgs',activation='relu')#,hidden_layer_sizes=(3,))
 	#clf = LinearRegression()
-	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.01)
+	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.001)
 	clf.fit(X_train, y_train)
 
 	accuracy = clf.score(X_train,y_train)
@@ -95,6 +95,8 @@ def add_electron(X):
 		#print X[i]#d[X[i][0]]#['electronegativity']
 		for j in range (len(X[i])):
 			X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
+			X[i][j].append(float(d[int(X[i][j][0])]['atomicMass'][:3]))
+			X[i][j].append(d[int(X[i][j][0])]['electronAffinity'])
 	
 	return X
 
@@ -103,9 +105,9 @@ d=np.load('rubb_data.npy').item()
 #X,y=d['X'],[float(xi[16]) for xi in d['y'] ]
 for i in range (1):
 	print i
-	t=3000
+	t=1000
 	#X,y=d['X'][:-2000],[float(xi[i])*627.51 for xi in d['y'][:-2000] ]
-	X,y=d['X'][:t],[float(xi[13])*627.51 for xi in d['y'][:t] ]
+	X,y=d['X'][:t],[float(xi[5])*627.51 for xi in d['y'][:t] ]
 	X=add_electron(X)
 	'''
 	train=X
