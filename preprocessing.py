@@ -18,10 +18,10 @@ def sort_distance(data,ref):
 	for i in  range (len(data)):
 		r=distance(data[i][1:4],ref[1:4])
 		if r==0.0:
-			lis.append(r)#data[i][0])
+			lis.append(data[i][0])#data[i][0])
 		else:
 			#lis.append(r)
-			lis.append((data[i][0]*ref[0])/r**2)
+			lis.append((data[i][0]*ref[0])/r)
 	lis.sort()
 	return lis
 
@@ -68,6 +68,8 @@ def process(data_all,size):
 		M=0
 		for i in data:
 			M+=float(i[0])
+		if M==0:
+			M=1
 		com=[]
 		for i in range (1,4):
 			com.append(sum([x[0]*x[i] for x in data])/M)
@@ -86,10 +88,10 @@ def process(data_all,size):
 		a1=len(distance_matrix)
 		for i in range (a):
 			if i>=a1:
-				distance_matrix.append([-1]*a)
+				distance_matrix.append([0.0]*a)
 			else:
 				for j in range (a1-1,b-1):
-					distance_matrix[i].append(-1)
+					distance_matrix[i].append(0.0)
 		big_li.append(distance_matrix)
 	#print np.array(big_li)
 	big_li=flat_X(np.array(big_li))
