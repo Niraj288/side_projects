@@ -12,27 +12,29 @@ import atom_data
 import time
 from sklearn import metrics
 from sklearn.ensemble import IsolationForest
-
 import scipy.io
-mat = scipy.io.loadmat(sys.argv[1])
 
-atoms=mat['Z']
-coord=mat['R']
-energy=mat['T']
+def get_Xy():
+	mat = scipy.io.loadmat(sys.argv[1])
 
-li=[]
+	atoms=mat['Z']
+	coord=mat['R']
+	energy=mat['T']
 
-for i in range (len(atoms)):
-	li.append([])
-	for j in range (len(atoms[i])):
-		if atoms[i][j]==0.0:
-			break
-		#print atoms[i][j],coord[i][j]
-		li[-1].append([atoms[i][j]]+list(coord[i][j]))
+	li=[]
+
+	for i in range (len(atoms)):
+		li.append([])
+		for j in range (len(atoms[i])):
+			if atoms[i][j]==0.0:
+				break
+			#print atoms[i][j],coord[i][j]
+			li[-1].append([atoms[i][j]]+list(coord[i][j]))
+	return li,energy[0]
 
 def prin(X,y,file):
 	t=100
-	clf = MLPRegressor(solver='lbfgs',activation='relu')#,hidden_layer_sizes=(3,))
+	clf = MLPRegressor(solver='lbfgs',activation='relu',hidden_layer_sizes=(800,))
 	#clf = LinearRegression()
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.001)
 	clf.fit(X_train, y_train)
@@ -99,8 +101,8 @@ def add_electron(X):
 	for i in range (len(X)):
 		#print X[i]#d[X[i][0]]#['electronegativity']
 		for j in range (len(X[i])):
-			X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
-			X[i][j].append(float(d[int(X[i][j][0])]['atomicMass'][:3]))
+			#X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
+			#X[i][j].append(float(d[int(X[i][j][0])]['atomicMass'][:3]))
 			X[i][j].append(d[int(X[i][j][0])]['electronAffinity'])
 			X[i][j].append(d[int(X[i][j][0])]['ionizationEnergy'])
 			#X[i][j].append(d[int(X[i][j][0])]['vanDelWaalsRadius'])
@@ -109,13 +111,15 @@ def add_electron(X):
 	
 	return X
 
-X=li
+#d={'X_processed':X,'y':y}
+d=np.load('katja_data.npy').item()
+#X,y=get_Xy()
+#d['X']=X 
+#np.save('katja_data.npy',d)
+X,y=d['X'],d['y']
 X=add_electron(X)
-y=energy[0]
 #y=map(lambda x : x*627.51, y)
 X=process(X,[30,30])
-#d['X_processed']=X 
-#np.save('rubb_data.npy',d)
 
 print len(X)
 X=ps.scale(X)
