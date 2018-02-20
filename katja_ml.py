@@ -14,6 +14,8 @@ from sklearn import metrics
 from sklearn.ensemble import IsolationForest
 import scipy.io
 from sklearn.preprocessing import MinMaxScaler
+import random
+from sklearn.model_selection import cross_val_score
 
 def get_Xy():
 	mat = scipy.io.loadmat(sys.argv[1])
@@ -33,15 +35,17 @@ def get_Xy():
 			li[-1].append([atoms[i][j]]+list(coord[i][j]))
 	return li,energy[0]
 
-def prin(X,y,file):
+def prin(X,y,file,dic):
 	t=100
-	clf = MLPRegressor(solver='lbfgs',activation='relu',hidden_layer_sizes=(800,))
+	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
-	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=0.001)
+	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
 
+	#scores = cross_val_score(clf, X, y, cv=5)
+	#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
 	accuracy = clf.score(X_train,y_train)
-	#MSE=clf.mean_squared_error(X_train,y_train)
 	print 'accuracy',accuracy,'\n'
 	print 'RMSE',math.sqrt(metrics.mean_squared_error(y,clf.predict(X)))
 	print 'MAE',metrics.mean_absolute_error(y,clf.predict(X))
@@ -50,12 +54,16 @@ def prin(X,y,file):
 	pr=clf.predict(X_test)
 	print 'Filename                 Percentage Error         Actual Value      Predicted Value           Difference\n'
 	for i in range (len(y_test)):
+		if y_test[i]==0.0:
+			y_test[i]=0.0000001
 		predi=str(round(((pr[i]-y_test[i])/y_test[i])*100,2))+' %'
 		print file[i]+' '*(20-len(file[i])),' '*(20-len(predi))+ predi, ' '*(20-len(str(y_test[i])))+str(y_test[i]) , ' '*(20-len(str(round(pr[i],2))))+str(round(pr[i],2)),' '*(20-len(str(round((y_test[i]-pr[i]),4))))+str(round((y_test[i]-pr[i]),4))
 	#print 'Mean square Error',mean_squared_error(X,pr)
 	#print 'R2 score',r2_score(X,pr)
 	#test(X,y,file,clf.coef_[0],clf.intercept_[0])
 	return pr
+
+
 def process(X,size):
 	print 'processing....'
 	t=time.time()
@@ -93,32 +101,64 @@ def add_valance(d,atomNumber):
 					break
 				j+=1
 			if d_v[st[i]]>int(st0):
-				res+=int(st0)
+				res+=-int(st0)
 	#print atomNumber,st,res 
 	return res 
 
-def add_electron(X):
+def read_inp():
+	f=open(sys.argv[1],'r')
+	lines=f.readlines()
+	f.close()
+	dic={'3D':[]}
+	for line in lines:
+		if '#' in line or len(line.strip().split())==0:
+			continue
+		a,b=line.strip().split()
+		if '3D'==a:
+			dic['3D'].append(b)
+		else:
+			dic[a]=b 
+	return dic
+
+def add_electron(X,dic):
+	if len(dic['3D'])==0:
+		return X 
 	d=atom_data.data(sys.argv[0])
 	for i in range (len(X)):
 		#print X[i]#d[X[i][0]]#['electronegativity']
 		for j in range (len(X[i])):
-			#X[i][j].append(d[int(X[i][j][0])]['electronegativity'])
-			#X[i][j].append(float(d[int(X[i][j][0])]['atomicMass'][:3]))
-			X[i][j].append(d[int(X[i][j][0])]['electronAffinity'])
-			X[i][j].append(d[int(X[i][j][0])]['ionizationEnergy'])
-			#X[i][j].append(d[int(X[i][j][0])]['vanDelWaalsRadius'])
-			#X[i][j].append(d[int(X[i][j][0])]['atomicRadius'])
-			#X[i][j].append(add_valance(d,int(X[i][j][0])))
+			for k in dic['3D']:
+				if k=='add_valance':
+					X[i][j].append(add_valance(d,int(X[i][j][0])))
+				elif k=='atomicMass':
+					X[i][j].append(float(d[int(X[i][j][0])][k][:4]))
+				else:
+					X[i][j].append(float(d[int(X[i][j][0])][k]))
+			
 	
 	return X
 
+def get_rand(X,y,t):
+	if t==-1:
+		return X,y
+	random.seed(1286)
+	inde= random.sample(range(len(X)),t)
+	x1,y1=[],[]
+	for i in inde:
+		x1.append(X[i])
+		y1.append(y[i])
+	return x1,y1
+
 #d={'X_processed':X,'y':y}
-#d=np.load('/users/nirajv/data/katja_data.npy').item()
-X,y=get_Xy()
+d=np.load('katja_data.npy').item()
+dic=read_inp()
+print dic 
+#X,y=get_Xy()
 #d['X']=X 
 #np.save('katja_data.npy',d)
-#X,y=d['X'],d['y']
-#X=add_electron(X)
+X,y=d['X'],d['y']
+X,y=get_rand(X,y,int(dic['size']))
+X=add_electron(X,dic)
 #y=map(lambda x : x*627.51, y)
 X=process(X,[25,25])
 
@@ -130,5 +170,19 @@ X=ps.scale(X)
 file=['']*len(X)
 print 'Training ...'
 t=time.time()
-prin(X,y,file)
+prin(X,y,file,dic)
 print 'Training done in',time.time()-t,'seconds'
+
+
+
+
+
+
+
+
+
+
+
+
+
+

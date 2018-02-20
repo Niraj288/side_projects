@@ -149,7 +149,10 @@ def read_inp():
 		else:
 			dic[a]=b 
 	return dic
+	
 def get_rand(X,y,t):
+	if t=='-1':
+		return X,y
 	random.seed(1286)
 	inde= random.sample(range(len(X)),t)
 	x1,y1=[],[]
