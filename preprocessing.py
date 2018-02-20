@@ -15,10 +15,11 @@ def distance(a,b):
 
 def sort_distance(data,ref):
 	lis=[]
+
 	for i in  range (len(data)):
 		r=distance(data[i][1:4],ref[1:4])
 		if r==0.0:
-			lis.append(data[i][0])#data[i][0])
+			lis.append(0.5*data[i][0]**2.4)#data[i][0])
 		else:
 			#lis.append(r)
 			lis.append((data[i][0]*ref[0])/r)
@@ -47,6 +48,15 @@ def make_image(my_list,name):
 				#print int((my_list[i][j]/ma)*255)
 	img.save(name+'.png')
 
+def align(data):
+	mi=99999999
+	for i in data:
+		if i[0]<mi:
+			mi=i[0]
+	if mi<0:
+		for i in range (len(data)):
+			data[i][0]+=(-mi) 
+	return data 
 
 def flat_X(X):
 	X_new=[]
@@ -64,6 +74,7 @@ def process(data_all,size):
 	#print indexes
 	for inde in indexes:
 		data=map(lambda x : [x[inde],x[1],x[2],x[3]],data_all)
+		data=align(data)
 		#print data
 		M=0
 		for i in data:
