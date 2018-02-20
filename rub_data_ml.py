@@ -1,9 +1,11 @@
 from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import MinMaxScaler
 import os
 import numpy as np
 import math
 import sys
 import preprocessing
+import random
 import subprocess
 import module
 import sklearn.preprocessing as ps 
@@ -139,7 +141,7 @@ def read_inp():
 	f.close()
 	dic={'3D':[]}
 	for line in lines:
-		if '#' in line:
+		if '#' in line or len(line.strip().split())==0:
 			continue
 		a,b=line.strip().split()
 		if '3D'==a:
@@ -147,8 +149,16 @@ def read_inp():
 		else:
 			dic[a]=b 
 	return dic
+def get_rand(X,y,t):
+	random.seed(1286)
+	inde= random.sample(range(len(X)),t)
+	x1,y1=[],[]
+	for i in inde:
+		x1.append(X[i])
+		y1.append(y[i])
+	return x1,y1
 
-d=np.load('rubb_data.npy').item()
+d=np.load('/users/nirajv/data/rubb_data.npy').item()
 #X,y=d['X'],[float(xi[16]) for xi in d['y'] ]
 #X,y,y2=get_Xy(sys.argv[1],5)
 #d={'X':X,'y':y2}
@@ -164,12 +174,14 @@ for i in eval(dic['labels']):
 	print '\n*********************************\n'
 	print i
 	t=int(dic['size'])
-	X,y=d['X'][:t],[float(xi[i])*627.51 for xi in d['y'][:t] ]
-	
+	X,y=d['X'],[float(xi[i])*627.51 for xi in d['y'] ]
+	X,y=get_rand(X,y,t)
 	X=add_electron(X,dic)
 	X=process(X,[30,30])
 	print 'Input size',len(X)
-	X=ps.scale(X)
+	#X=ps.scale(X)
+	min_max_scaler = MinMaxScaler()
+	X = min_max_scaler.fit_transform(X)
 	file=['']*len(X)
 	#X,y=d['X'][:-2000],[float(xi[i])*627.51 for xi in d['y'][:-2000] ]
 	#X,y,y1=get_Xy(sys.argv[1],5)

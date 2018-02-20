@@ -13,6 +13,7 @@ import time
 from sklearn import metrics
 from sklearn.ensemble import IsolationForest
 import scipy.io
+from sklearn.preprocessing import MinMaxScaler
 
 def get_Xy():
 	mat = scipy.io.loadmat(sys.argv[1])
@@ -112,18 +113,19 @@ def add_electron(X):
 	return X
 
 #d={'X_processed':X,'y':y}
-d=np.load('katja_data.npy').item()
-#X,y=get_Xy()
+#d=np.load('/users/nirajv/data/katja_data.npy').item()
+X,y=get_Xy()
 #d['X']=X 
 #np.save('katja_data.npy',d)
-X,y=d['X'],d['y']
-X=add_electron(X)
+#X,y=d['X'],d['y']
+#X=add_electron(X)
 #y=map(lambda x : x*627.51, y)
-X=process(X,[30,30])
+X=process(X,[25,25])
 
 print len(X)
 X=ps.scale(X)
-
+#min_max_scaler = MinMaxScaler()
+#X = min_max_scaler.fit_transform(X)
 
 file=['']*len(X)
 print 'Training ...'
