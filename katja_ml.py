@@ -41,11 +41,13 @@ def prin(X,y,file,dic):
 	#clf = LinearRegression()
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
-
+	
+	print 'Training size',len(X_train)
+	print 'Testing size',len(X_test)
 	#scores = cross_val_score(clf, X, y, cv=5)
 	#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
-	accuracy = clf.score(X_train,y_train)
+	accuracy = clf.score(X_test,y_test)
 	print 'accuracy',accuracy,'\n'
 	print 'RMSE',math.sqrt(metrics.mean_squared_error(y,clf.predict(X)))
 	print 'MAE',metrics.mean_absolute_error(y,clf.predict(X))
@@ -150,7 +152,8 @@ def get_rand(X,y,t):
 	return x1,y1
 
 #d={'X_processed':X,'y':y}
-d=np.load('katja_data.npy').item()
+#d=np.load('katja_data.npy').item()
+d=np.load('/users/nirajv/data/katja_data.npy').item()
 dic=read_inp()
 print dic 
 #X,y=get_Xy()
