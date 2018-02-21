@@ -16,6 +16,7 @@ import scipy.io
 from sklearn.preprocessing import MinMaxScaler
 import random
 from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
 
 def get_Xy():
 	mat = scipy.io.loadmat(sys.argv[1])
@@ -35,6 +36,12 @@ def get_Xy():
 			li[-1].append([atoms[i][j]]+list(coord[i][j]))
 	return li,energy[0]
 
+def validate(X,y,dic):
+	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
+	crossvalidation = KFold(n_splits=5, shuffle=True, random_state=1)
+	scores = cross_val_score(clf, X, y,scoring='mean_squared_error', cv=crossvalidation, n_jobs=-1)
+	print 'Folds: %i, mean absolute error: %.2f std: %.2f' %(len(scores),np.mean(np.abs(scores)),np.std(scores))
+
 def prin(X,y,file,dic):
 	t=100
 	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
@@ -47,10 +54,10 @@ def prin(X,y,file,dic):
 	#scores = cross_val_score(clf, X, y, cv=5)
 	#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
-	accuracy = clf.score(X_test,y_test)
+	accuracy = clf.score(X_train,y_train)
 	print 'accuracy',accuracy,'\n'
-	print 'RMSE',math.sqrt(metrics.mean_squared_error(y,clf.predict(X)))
-	print 'MAE',metrics.mean_absolute_error(y,clf.predict(X))
+	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,clf.predict(X_test)))
+	print 'MAE',metrics.mean_absolute_error(y_test,clf.predict(X_test))
 	#X_test,y_test=X[-t:],y[-t:]
 	#file=file[-t:]
 	pr=clf.predict(X_test)
@@ -152,8 +159,8 @@ def get_rand(X,y,t):
 	return x1,y1
 
 #d={'X_processed':X,'y':y}
-#d=np.load('katja_data.npy').item()
-d=np.load('/users/nirajv/data/katja_data.npy').item()
+d=np.load('katja_data.npy').item()
+#d=np.load('/users/nirajv/data/katja_data.npy').item()
 dic=read_inp()
 print dic 
 #X,y=get_Xy()
@@ -173,7 +180,8 @@ X=ps.scale(X)
 file=['']*len(X)
 print 'Training ...'
 t=time.time()
-prin(X,y,file,dic)
+#prin(X,y,file,dic)
+validate(X,y,dic)
 print 'Training done in',time.time()-t,'seconds'
 
 
