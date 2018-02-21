@@ -36,7 +36,44 @@ def get_Xy():
 			li[-1].append([atoms[i][j]]+list(coord[i][j]))
 	return li,energy[0]
 
+def prin2(X_train, y_train, X_test, y_test,dic):
+	t=100
+	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
+	#clf = LinearRegression()
+	clf.fit(X_train, y_train)
+	
+	print 'Training size',len(X_train)
+	print 'Testing size',len(X_test)
+	#scores = cross_val_score(clf, X, y, cv=5)
+	#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
+	accuracy = clf.score(X_train,y_train)
+	print 'accuracy',accuracy,'\n'
+	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,clf.predict(X_test)))
+	MAE=metrics.mean_absolute_error(y_test,clf.predict(X_test))
+	print 'MAE',MAE 
+	#X_test,y_test=X[-t:],y[-t:]
+	#file=file[-t:]
+	pr=clf.predict(X_test)
+	print 'Percentage Error         Actual Value      Predicted Value           Difference\n'
+	for i in range (len(y_test)):
+		if y_test[i]==0.0:
+			y_test[i]=0.0000001
+		predi=str(round(((pr[i]-y_test[i])/y_test[i])*100,2))+' %'
+		print ' '*(20-len(predi))+ predi, ' '*(20-len(str(y_test[i])))+str(y_test[i]) , ' '*(20-len(str(round(pr[i],2))))+str(round(pr[i],2)),' '*(20-len(str(round((y_test[i]-pr[i]),4))))+str(round((y_test[i]-pr[i]),4))
+	#print 'Mean square Error',mean_squared_error(X,pr)
+	#print 'R2 score',r2_score(X,pr)
+	#test(X,y,file,clf.coef_[0],clf.intercept_[0])
+	return MAE
+
 def validate(X,y,dic):
+	kf = KFold(n_splits=5, random_state=True, shuffle=True )
+	ref=0
+	for train,test in kf.split(y):
+		ref+=prin2(X[train],y[train],X[test],y[test],dic)
+	print 'cross validation MAE',ref/5
+	return ref/5
+
 	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	crossvalidation = KFold(n_splits=5, shuffle=True, random_state=1)
 	scores = cross_val_score(clf, X, y,scoring='mean_squared_error', cv=crossvalidation, n_jobs=-1)
@@ -57,7 +94,8 @@ def prin(X,y,file,dic):
 	accuracy = clf.score(X_train,y_train)
 	print 'accuracy',accuracy,'\n'
 	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,clf.predict(X_test)))
-	print 'MAE',metrics.mean_absolute_error(y_test,clf.predict(X_test))
+	MAE=metrics.mean_absolute_error(y_test,clf.predict(X_test))
+	print 'MAE',MAE 
 	#X_test,y_test=X[-t:],y[-t:]
 	#file=file[-t:]
 	pr=clf.predict(X_test)
@@ -70,7 +108,7 @@ def prin(X,y,file,dic):
 	#print 'Mean square Error',mean_squared_error(X,pr)
 	#print 'R2 score',r2_score(X,pr)
 	#test(X,y,file,clf.coef_[0],clf.intercept_[0])
-	return pr
+	return MAE
 
 
 def process(X,size):
