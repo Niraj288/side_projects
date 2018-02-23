@@ -111,13 +111,13 @@ def prin(X,y,file,dic):
 	return MAE
 
 
-def process(X,size,y):
+def process(X,size):
 	print 'processing....'
 	t=time.time()
 	a,b=size
 	X_new=[]
 	for i in range (len(X)):
-		X_new.append(preprocessing_cm.process(X[i],[a,b],y[i]))
+		X_new.append(preprocessing_cm.process(X[i],[a,b]))
 		#preprocessing.make_image(preprocessing.process(X[i],[12,12]),str(i))
 	print 'processing done in',time.time()-t,'seconds'
 	return np.array(X_new)
@@ -208,7 +208,7 @@ X,y=d['X'],d['y']
 X,y=get_rand(X,y,int(dic['size']))
 X=add_electron(X,dic)
 #y=map(lambda x : x*627.51, y)
-X=process(X,[25,25],y)
+X=process(X,[25,25])
 
 print len(X)
 X=ps.scale(X)

@@ -14,13 +14,10 @@ def distance(a,b):
 	return math.sqrt(res)
 
 def distance_M(lis,a,b):
-	if a==b:
-		return 0
-	
 	z1,z2=lis[a][0],lis[b][0]
 	r=distance(lis[a][1:4],lis[b][1:4])
 
-	return z1*z2/r 
+	return z1*z2*math.exp(abs(z1-z2)*-r) 
 
 
 def sort_distance(data,ref):
@@ -75,22 +72,19 @@ def flat_X(X):
 	return np.array(X_new).flatten()
 	#return np.array(X_new)
 
-def get_fit(lis,y):
-	x,y1=[],[]
-	t=1
-	if y<0:
-			t=-1
+def get_fit(lis,fi):
+	z=[]
+	c,i=fi
+	l=len(c)
 	for i in range (len(lis)):
-		x.append([1,math.log(lis[i][0])])
-		y1.append(math.log(y*t))
-	clf = LinearRegression() #(n_jobs=processors)
-	clf.fit(x, y1)
-	cf=clf.coef_
-	c=clf.intercept_
-	a,b,k= math.exp(cf[0])*t, cf[1], math.exp(c)
-	return [(a*lis[i][0]**b)/k for i in range (len(lis))]
+		res=0
+		for j in range (len(c)):
+			res+=(lis[i][0]**(l-j))*c[j]
+		res+=i 
+		z.append(res) 
+	return z
 
-def process(data_all,size,y):
+def process(data_all,size):
 	k=len(data_all[0])
 	indexes=[0]#[0]
 	if k>3:
@@ -127,11 +121,11 @@ def process(data_all,size,y):
 				distance_matrix[-1].append(distance_M(pre_list,i,j))
 		
 		#eigens=np.linalg.eig(distance_matrix)[0]
-		eigens=get_fit(pre_list,y)
-
+		'''
+		eigens=get_fit(pre_list,fi)
 		for i in range (len(eigens)):
 			distance_matrix[i][i]=eigens[i]
-		
+		'''
 		a,b=size
 		a1=len(distance_matrix)
 		for i in range (a):
@@ -158,7 +152,7 @@ if __name__=='__main__':
 	print data
 	'''
 	data=[[1,-1,1,0,1.5,0.8],[1,1,1,0,1.6,9],[3,0,2,0,-0.8,8],[4,1,1,1,0.9,7]]
-	print process(data,[5,5],[1,2,3,4])
+	print process(data,[5,5])
 	#make_image(process(data,[12,12]),'0_3.png')
 
 
