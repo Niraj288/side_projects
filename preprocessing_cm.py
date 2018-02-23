@@ -3,6 +3,7 @@ import sys
 import numpy as np 
 import math
 from PIL import Image
+from sklearn.linear_model import LinearRegression
 
 
 def distance(a,b):
@@ -74,7 +75,22 @@ def flat_X(X):
 	return np.array(X_new).flatten()
 	#return np.array(X_new)
 
-def process(data_all,size):
+def get_fit(lis,y):
+	x,y1=[],[]
+	t=1
+	if y<0:
+			t=-1
+	for i in range (len(lis)):
+		x.append([1,math.log(lis[i][0])])
+		y1.append(math.log(y*t))
+	clf = LinearRegression() #(n_jobs=processors)
+	clf.fit(x, y1)
+	cf=clf.coef_
+	c=clf.intercept_
+	a,b,k= math.exp(cf[0])*t, cf[1], math.exp(c)
+	return [(a*lis[i][0]**b)/k for i in range (len(lis))]
+
+def process(data_all,size,y):
 	k=len(data_all[0])
 	indexes=[0]#[0]
 	if k>3:
@@ -109,7 +125,9 @@ def process(data_all,size):
 			distance_matrix.append([])
 			for j in range (len(pre_list)):
 				distance_matrix[-1].append(distance_M(pre_list,i,j))
-		eigens=np.linalg.eig(distance_matrix)[0]
+		
+		#eigens=np.linalg.eig(distance_matrix)[0]
+		eigens=get_fit(pre_list,y)
 
 		for i in range (len(eigens)):
 			distance_matrix[i][i]=eigens[i]
@@ -140,7 +158,7 @@ if __name__=='__main__':
 	print data
 	'''
 	data=[[1,-1,1,0,1.5,0.8],[1,1,1,0,1.6,9],[3,0,2,0,-0.8,8],[4,1,1,1,0.9,7]]
-	print process(data,[5,5])
+	print process(data,[5,5],[1,2,3,4])
 	#make_image(process(data,[12,12]),'0_3.png')
 
 

@@ -17,6 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 import random
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
+import preprocessing_cm
 
 def get_Xy():
 	mat = scipy.io.loadmat(sys.argv[1])
@@ -67,17 +68,16 @@ def prin2(X_train, y_train, X_test, y_test,dic):
 	return MAE
 
 def validate(X,y,dic):
-	kf = KFold(n_splits=5, random_state=True, shuffle=True )
-	ref=0
-	for train,test in kf.split(y):
-		ref+=prin2(X[train],y[train],X[test],y[test],dic)
-	print 'cross validation MAE',ref/5
-	return ref/5
-
-	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
-	crossvalidation = KFold(n_splits=5, shuffle=True, random_state=1)
-	scores = cross_val_score(clf, X, y,scoring='mean_squared_error', cv=crossvalidation, n_jobs=-1)
-	print 'Folds: %i, mean absolute error: %.2f std: %.2f' %(len(scores),np.mean(np.abs(scores)),np.std(scores))
+        kf = KFold(n_splits=5, random_state=True, shuffle=True )
+        ref=0
+        for train,test in kf.split(y):
+                a=np.array([X[i] for i in train])
+                b=np.array([y[i] for i in train])
+                c=np.array([X[i] for i in test])
+                d=np.array([y[i] for i in test])
+                ref+=prin2(a,b,c,d,dic)
+        print 'cross validation MAE',ref/5
+        return ref/5
 
 def prin(X,y,file,dic):
 	t=100
@@ -111,13 +111,13 @@ def prin(X,y,file,dic):
 	return MAE
 
 
-def process(X,size):
+def process(X,size,y):
 	print 'processing....'
 	t=time.time()
 	a,b=size
 	X_new=[]
 	for i in range (len(X)):
-		X_new.append(preprocessing.process(X[i],[a,b]))
+		X_new.append(preprocessing_cm.process(X[i],[a,b],y[i]))
 		#preprocessing.make_image(preprocessing.process(X[i],[12,12]),str(i))
 	print 'processing done in',time.time()-t,'seconds'
 	return np.array(X_new)
@@ -208,7 +208,7 @@ X,y=d['X'],d['y']
 X,y=get_rand(X,y,int(dic['size']))
 X=add_electron(X,dic)
 #y=map(lambda x : x*627.51, y)
-X=process(X,[25,25])
+X=process(X,[25,25],y)
 
 print len(X)
 X=ps.scale(X)
