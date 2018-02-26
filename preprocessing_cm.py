@@ -19,6 +19,12 @@ def distance_M(lis,a,b):
 
 	return z1*z2*math.exp(abs(z1-z2)*-r) 
 
+def distance_M2(lis,a,b):
+	z1,z2=lis[a][0],lis[b][0]
+	r=distance(lis[a][1:4],lis[b][1:4])
+	if r==0:
+		return 0.5*z1**2.4
+	return z1*z2/r
 
 def sort_distance(data,ref):
 	lis=[]
@@ -118,7 +124,7 @@ def process(data_all,size):
 		for i in range (len(pre_list)):
 			distance_matrix.append([])
 			for j in range (len(pre_list)):
-				distance_matrix[-1].append(distance_M(pre_list,i,j))
+				distance_matrix[-1].append(distance_M2(pre_list,i,j))
 		
 		#eigens=np.linalg.eig(distance_matrix)[0]
 		'''

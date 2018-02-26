@@ -117,7 +117,7 @@ def process(X,size):
 	a,b=size
 	X_new=[]
 	for i in range (len(X)):
-		X_new.append(preprocessing_cm.process(X[i],[a,b]))
+		X_new.append(preprocessing.process(X[i],[a,b]))
 		#preprocessing.make_image(preprocessing.process(X[i],[12,12]),str(i))
 	print 'processing done in',time.time()-t,'seconds'
 	return np.array(X_new)
@@ -197,8 +197,8 @@ def get_rand(X,y,t):
 	return x1,y1
 
 #d={'X_processed':X,'y':y}
-d=np.load('katja_data.npy').item()
-#d=np.load('/users/nirajv/data/katja_data.npy').item()
+#d=np.load('katja_data.npy').item()
+d=np.load('/users/nirajv/data/katja_data.npy').item()
 dic=read_inp()
 print dic 
 #X,y=get_Xy()
@@ -211,7 +211,7 @@ X=add_electron(X,dic)
 X=process(X,[25,25])
 
 print len(X)
-X=ps.scale(X)
+#X=ps.scale(X)
 #min_max_scaler = MinMaxScaler()
 #X = min_max_scaler.fit_transform(X)
 
