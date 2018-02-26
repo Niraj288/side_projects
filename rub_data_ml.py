@@ -49,16 +49,17 @@ def get_Xy(path,index):
 
 def prin(X,y,file,dic):
 	t=100
-	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']))
+	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
-
+	print 'X_train',len(X_train)
+	print 'X_test',len(X_test)
 	accuracy = clf.score(X_train,y_train)
 	#MSE=clf.mean_squared_error(X_train,y_train)
 	print 'accuracy',accuracy,'\n'
-	print 'RMSE',math.sqrt(metrics.mean_squared_error(y,clf.predict(X)))
-	print 'MAE',metrics.mean_absolute_error(y,clf.predict(X))
+	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,clf.predict(X_test)))
+	print 'MAE',metrics.mean_absolute_error(y_test,clf.predict(X_test))
 	#X_test,y_test=X[-t:],y[-t:]
 	#file=file[-t:]
 	pr=clf.predict(X_test)
@@ -119,6 +120,8 @@ def add_valance(d,atomNumber):
 	return res 
 
 def add_electron(X,dic):
+	if len(dic['3D'])==0:
+		return X
 	d=atom_data.data(sys.argv[0])
 	for i in range (len(X)):
 		#print X[i]#d[X[i][0]]#['electronegativity']
@@ -183,8 +186,8 @@ for i in eval(dic['labels']):
 	X=process(X,[30,30])
 	print 'Input size',len(X)
 	#X=ps.scale(X)
-	min_max_scaler = MinMaxScaler()
-	X = min_max_scaler.fit_transform(X)
+	#min_max_scaler = MinMaxScaler()
+	#X = min_max_scaler.fit_transform(X)
 	file=['']*len(X)
 	#X,y=d['X'][:-2000],[float(xi[i])*627.51 for xi in d['y'][:-2000] ]
 	#X,y,y1=get_Xy(sys.argv[1],5)
