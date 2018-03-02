@@ -19,6 +19,40 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 import preprocessing_cm
 
+def D_coord(index):
+	d=np.load('/Users/47510753/Downloads/katja_data.npy').item()
+	#d=np.load('/users/nirajv/data/katja_data.npy').item()
+	dic=read_inp()
+	print dic 
+	#X,y=get_Xy()
+	#d['X']=X 
+	#np.save('katja_data.npy',d)
+	X,y=d['X'],d['y']
+	X,y=get_rand(X,y,int(dic['size']))
+	X=add_electron(X,dic)
+	X=process(X,[10,10],1)
+	X_new=[]
+	ma,mi=-99999,99999
+	coords=[]
+	for i in range (len(X)):
+		for j in range (len(X[i])):
+			for k in range (len(X[i][j])):
+				for l in range (len(X[i][j][k])):
+					coords.append([X[i][j][k][l],j,k,l]) 
+					if ma<X[i][j][k][l]:
+						ma=X[i][j][k][l]
+					if mi>X[i][j][k][l]:
+						mi=X[i][j][k][l]
+	M=1+ma-mi
+	f=open('3D.xyz','w')
+	for i in range (len(coords)):
+		coords[i][0]=((-mi+0.1+coords[i][0])/M)*0.5+0.01
+		f.write(' '.join(map(str,coords[i]))+'\n')
+	f.close()
+	return coords
+	
+
+
 def get_Xy():
 	mat = scipy.io.loadmat(sys.argv[1])
 
@@ -111,15 +145,17 @@ def prin(X,y,file,dic):
 	return MAE
 
 
-def process(X,size):
+def process(X,size,d3=0):
 	print 'processing....'
 	t=time.time()
 	a,b=size
 	X_new=[]
 	for i in range (len(X)):
-		X_new.append(preprocessing.process(X[i],[a,b]))
+		X_new.append(preprocessing.process(X[i],[a,b],d3))
 		#preprocessing.make_image(preprocessing.process(X[i],[12,12]),str(i))
 	print 'processing done in',time.time()-t,'seconds'
+	if d3:
+		return X_new
 	return np.array(X_new)
 
 def flat_X(X):
@@ -148,7 +184,10 @@ def add_valance(d,atomNumber):
 					break
 				j+=1
 			if d_v[st[i]]>int(st0):
-				res+=-int(st0)
+				if int(st0)>0.5*d_v[st[i]]:
+					res+=-(d_v[st[i]]-int(st0))
+				else:
+					res+=int(st0)
 	#print atomNumber,st,res 
 	return res 
 
@@ -196,31 +235,35 @@ def get_rand(X,y,t):
 		y1.append(y[i])
 	return x1,y1
 
-#d={'X_processed':X,'y':y}
-#d=np.load('katja_data.npy').item()
-d=np.load('/users/nirajv/data/katja_data.npy').item()
-dic=read_inp()
-print dic 
-#X,y=get_Xy()
-#d['X']=X 
-#np.save('katja_data.npy',d)
-X,y=d['X'],d['y']
-X,y=get_rand(X,y,int(dic['size']))
-X=add_electron(X,dic)
-#y=map(lambda x : x*627.51, y)
-X=process(X,[25,25])
+def run():
+	#d={'X_processed':X,'y':y}
+	d=np.load('katja_data.npy').item()
+	#d=np.load('/users/nirajv/data/katja_data.npy').item()
+	dic=read_inp()
+	print dic 
+	#X,y=get_Xy()
+	#d['X']=X 
+	#np.save('katja_data.npy',d)
+	X,y=d['X'],d['y']
+	X,y=get_rand(X,y,int(dic['size']))
+	X=add_electron(X,dic)
+	#y=map(lambda x : x*627.51, y)
+	X=process(X,[25,25])
 
-print len(X)
-#X=ps.scale(X)
-#min_max_scaler = MinMaxScaler()
-#X = min_max_scaler.fit_transform(X)
+	print len(X)
+	#X=ps.scale(X)
+	#min_max_scaler = MinMaxScaler()
+	#X = min_max_scaler.fit_transform(X)
 
-file=['']*len(X)
-print 'Training ...'
-t=time.time()
-#prin(X,y,file,dic)
-validate(X,y,dic)
-print 'Training done in',time.time()-t,'seconds'
+	file=['']*len(X)
+	print 'Training ...'
+	t=time.time()
+	prin(X,y,file,dic)
+	#validate(X,y,dic)
+	print 'Training done in',time.time()-t,'seconds'
+
+run()
+#D_coord(1)
 
 
 

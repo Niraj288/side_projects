@@ -19,11 +19,14 @@ def sort_distance(data,ref):
 	for i in  range (len(data)):
 		r=distance(data[i][1:4],ref[1:4])
 		if r==0.0:
-			lis.append(0.5*data[i][0]**2.4)#data[i][0])
+			if data[i][0]>0:
+				lis.append(data[i][0]**2)#data[i][0])
+			else:
+				lis.append(-data[i][0]**2)
 		else:
 			#lis.append(r)
 			lis.append((data[i][0]*ref[0])/r)
-	lis.sort()
+	lis.sort(reverse=1)
 	return lis
 
 def make_image(my_list,name):
@@ -65,7 +68,7 @@ def flat_X(X):
 	return np.array(X_new).flatten()
 	#return np.array(X_new)
 
-def process(data_all,size):
+def process(data_all,size,d3=0):
 	k=len(data_all[0])
 	indexes=[0]#[0]
 	if k>3:
@@ -74,7 +77,7 @@ def process(data_all,size):
 	#print indexes
 	for inde in indexes:
 		data=map(lambda x : [x[inde],x[1],x[2],x[3]],data_all)
-		data=align(data)
+		#data=align(data)
 		#print data
 		M=0
 		for i in data:
@@ -93,7 +96,7 @@ def process(data_all,size):
 		distance_matrix=[]
 		for i in pre_list:
 			distance_matrix.append(sort_distance(data,i))
-		distance_matrix=sorted(distance_matrix,key=lambda x : sum(x))  # make sure you need this!!
+		distance_matrix=sorted(distance_matrix,key=lambda x : sum(x), reverse=1)  # make sure you need this!!
 		
 		a,b=size
 		a1=len(distance_matrix)
@@ -105,6 +108,8 @@ def process(data_all,size):
 					distance_matrix[i].append(0.0)
 		big_li.append(distance_matrix)
 	#print np.array(big_li)
+	if d3:
+		return big_li
 	big_li=flat_X(np.array(big_li))
 	return np.array(big_li)
 
