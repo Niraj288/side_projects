@@ -23,14 +23,13 @@ def get_val(data,i,j,d):
 	d[tuple(li)]+=[lis[-1]]
 
 def align(d,size):
-	t=60
-	ma=-99999
+	t=1000
+	ma=0
 	for i in d:
 		k=d[i] 
 		k.sort(reverse=1)
 		d[i]=k
-		if len(d[i])>ma:
-			ma=len(d[i])
+		ma+=len(d[i])
 	if ma>t:
 		print 'Warning : Data loss ',ma,t  
 	lis=[]
@@ -38,13 +37,11 @@ def align(d,size):
 
 	for i in range (1,a):
 		for j in range (1,b):
-			for k in range (t):
-				li=[float(i),float(j)]
-				li.sort()
-				if k>=len(d[tuple(li)]):
-					lis.append(0.0)
-				else:
-					lis.append(d[tuple(li)][k])
+			li=[float(i),float(j)]
+			li.sort()
+			lis+=d[tuple(li)]+[0.0]
+	if len(lis)<t:
+		lis+=[0.0]*(t-len(lis))
 	return np.array(lis)
 
 
@@ -68,4 +65,4 @@ def process(data,size,d3):
 	return align(d,size)
 
 if __name__=='__main__':
-	print process([[1,0,0,0],[2,1,0,0],[1,0,1,0]],[4,4])
+	print process([[1,0,0,0],[2,1,0,0],[1,0,1,0]],[4,4],0)
