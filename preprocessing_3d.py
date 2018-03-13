@@ -60,6 +60,7 @@ def get_val(data,i,j,d,inde):
                 lis.append((data[i][inde]*data[j][inde])/r)
         d[tuple(li)]+=[lis[-1]]
 
+#align with 100 places for each bond
 def align(d,size):
         t=2500
         ma=0
@@ -84,6 +85,34 @@ def align(d,size):
         if len(lis)>t:
                 print 'Warning : Data loss ',len(lis),t
         return lis
+
+#align with just concatenating
+def align_n(d,size):
+	t=1500
+	#ma=-99999
+	ma=0
+	for i in d:
+		k=d[i] 
+		k.sort(reverse=1)
+		d[i]=k
+		ma+=len(d[i])
+		'''
+		if len(d[i])>ma:
+			ma=len(d[i])
+		'''
+	lis=[]
+	a,b=size
+	for i in range (1,a):
+		for j in range (1,b):
+			li=[float(i),float(j)]
+			li.sort()
+			lis+=d[tuple(li)]
+			lis+=[1]
+	if len(lis)<t:
+		lis+=[0.0]*(t-len(lis))
+	if len(lis)>t:
+                print 'Warning : Data loss ',len(lis),t
+	return lis
 
 
 def align4(d,size):
