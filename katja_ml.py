@@ -18,6 +18,9 @@ import random
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 import preprocessing_cm
+from sklearn.kernel_ridge import KernelRidge
+import preprocessing_3d
+import matplotlib.pyplot as plt
 
 def D_coord(index):
 	d=np.load('/Users/47510753/Downloads/katja_data.npy').item()
@@ -75,6 +78,7 @@ def prin2(X_train, y_train, X_test, y_test,dic):
 	t=100
 	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
+	#clf=KernelRidge(alpha=0.1,kernel='laplacian')
 	clf.fit(X_train, y_train)
 	
 	print 'Training size',len(X_train)
@@ -113,10 +117,22 @@ def validate(X,y,dic):
         print 'cross validation MAE',ref/5
         return ref/5
 
+def plot_g(clf):
+	li,x=[],[]
+	for i in range (5,15):
+		li.append([[6,0,0,0],[6,0,0,0.2*i]])
+		x.append(0.2*i)
+	pr=clf.predict(process(li,[30,30]))
+	plt.plot(x,pr,'r-')
+	plt.show()
+	
+
+
 def prin(X,y,file,dic):
 	t=100
-	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
+	#clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
+	clf=KernelRidge(alpha=0.0001,kernel='laplacian',degree=18)
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
 	
@@ -142,6 +158,7 @@ def prin(X,y,file,dic):
 	#print 'Mean square Error',mean_squared_error(X,pr)
 	#print 'R2 score',r2_score(X,pr)
 	#test(X,y,file,clf.coef_[0],clf.intercept_[0])
+	#plot_g(clf)
 	return MAE
 
 
@@ -151,7 +168,7 @@ def process(X,size,d3=0):
 	a,b=size
 	X_new=[]
 	for i in range (len(X)):
-		X_new.append(preprocessing.process(X[i],[a,b],d3))
+		X_new.append(preprocessing_3d.process(X[i],[a,b],d3))
 		#preprocessing.make_image(preprocessing.process(X[i],[12,12]),str(i))
 	print 'processing done in',time.time()-t,'seconds'
 	if d3:
@@ -248,7 +265,7 @@ def run():
 	X,y=get_rand(X,y,int(dic['size']))
 	X=add_electron(X,dic)
 	#y=map(lambda x : x*627.51, y)
-	X=process(X,[25,25])
+	X=process(X,[30,30])
 
 	print len(X)
 	#X=ps.scale(X)
