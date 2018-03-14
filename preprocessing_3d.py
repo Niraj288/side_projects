@@ -60,9 +60,9 @@ def get_val(data,i,j,d,inde):
                 lis.append((data[i][inde]*data[j][inde])/r)
         d[tuple(li)]+=[lis[-1]]
 
-#align with 100 places for each bond
+#align with 121 places for each bond
 def align(d,size):
-        t=2500
+        t=2000
         ma=0
         for i in d:
                 k=d[i]
@@ -79,7 +79,11 @@ def align(d,size):
                         li.sort()
                         if len(d[tuple(li)])==0:
                                 continue
-                        lis+=d[tuple(li)]+[0.0]*(100-len(d[tuple(li)]))
+                        #if len(d[tuple(li)])>50:
+                        #	print len(d[tuple(li)])
+                        lis+=d[tuple(li)]+[0.0]*(70-len(d[tuple(li)]))
+        if len(lis)>2000:
+                print len(lis)
         if len(lis)<t:
                 lis+=[0.0]*(t-len(lis))
         if len(lis)>t:
@@ -253,6 +257,7 @@ def process4(data,size,d3):
 		big_li+=align4(d,size)
 	return np.array(big_li)
 
+# bag of bonds with equivalent bonds array size
 def process(data,size,d3):
 	k=len(data[0])
 	indexes=[0]#[0]

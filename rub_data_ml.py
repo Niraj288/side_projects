@@ -14,6 +14,7 @@ import atom_data
 import time
 from sklearn import metrics
 from sklearn.ensemble import IsolationForest
+from sklearn.kernel_ridge import KernelRidge
 
 def coord(path,index,d):
 	f=open(path,'r')
@@ -49,8 +50,9 @@ def get_Xy(path,index):
 
 def prin(X,y,file,dic):
 	t=100
-	clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
+	#clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
+	clf=KernelRidge(kernel ='laplacian', alpha=0.001)
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
 	print 'X_train',len(X_train)
@@ -164,7 +166,8 @@ def get_rand(X,y,t):
 		y1.append(y[i])
 	return x1,y1
 
-d=np.load('/users/nirajv/data/rubb_data.npy').item()
+#d=np.load('/users/nirajv/data/rubb_data.npy').item()
+d=np.load('rubb_data.npy').item()
 #X,y=d['X'],[float(xi[16]) for xi in d['y'] ]
 #X,y,y2=get_Xy(sys.argv[1],5)
 #d={'X':X,'y':y2}
