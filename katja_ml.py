@@ -53,7 +53,7 @@ def D_coord(index):
 		f.write(' '.join(map(str,coords[i]))+'\n')
 	f.close()
 	return coords
-	
+
 
 
 def get_Xy():
@@ -132,7 +132,7 @@ def prin(X,y,file,dic):
 	t=100
 	#clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
-	clf=KernelRidge(alpha=0.0001,kernel='laplacian',degree=18)
+	clf=KernelRidge(alpha=0.001,kernel='laplacian',degree=18)
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
 	
