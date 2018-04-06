@@ -8,6 +8,7 @@ import make_lmode_file
 import addKaTopdb
 import xtb_lmode
 import time
+import addBCP
 
 #give com file
 def xyz(filename,end):
@@ -50,6 +51,9 @@ def lmode(filename,software='gaussian'):
 		make_lmode_file.make_alm(filename+'.txt','_dh')
 		addKaTopdb.addKa(filename+'.txt','_dh')
 
+def BCP(filename):
+	addBCP.job(filename)
+
 def job(path):
 	li=path.split('/')[-1].split('.')
 	if len(li)>1:
@@ -69,10 +73,18 @@ def job(path):
 	elif '-l' in sys.argv:
 		print 'Calculating local modes ...'
 		lmode(filename)
+	if '-d' in sys.argv:
+		print 'Fetching electron density at BCP (a.u) ...'
+		BCP(filename)
 	print 'Done!!'
 
 if __name__ == "__main__":
-	job(sys.argv[1])
+	if len(sys.argv)<2:
+		print '-c for carbon-hydrogen bond'
+		print '-l for local mode calculation'
+		print '-d for density at BCP from .sum file'
+	else:
+		job(sys.argv[1])
 
 
 
