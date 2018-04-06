@@ -158,11 +158,11 @@ def job(filename):
                 a,b=i
                 if a>max_d:
                         max_d=a
-        print max_d
+        print 'Points found from sum file',max_d
         i_ref=1
         txt_path=filename+'.txt'#raw_input("Enter .txt path : ")
         p_id=get_ids(txt_path,suffix='_ah')
-        print p_id
+        #print p_id
         li=[]
         for i in range (max_d+1):
                 if check(d[(index-1,'bn')],p_id,d,index):
@@ -185,6 +185,7 @@ def job(filename):
         	
 
         addBCP(txt_path,p_id)
+        print 'Making Excel file for aimall calculation...'
         workbook.save(filename+'.xls')
 
 if __name__=='__main__':
