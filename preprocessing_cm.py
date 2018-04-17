@@ -126,12 +126,12 @@ def process(data_all,size):
 			for j in range (len(pre_list)):
 				distance_matrix[-1].append(distance_M2(pre_list,i,j))
 		
-		#eigens=np.linalg.eig(distance_matrix)[0]
-		'''
-		eigens=get_fit(pre_list,fi)
+		eigens=np.linalg.eig(distance_matrix)[0]
+		
+		#eigens=get_fit(pre_list,fi)
 		for i in range (len(eigens)):
 			distance_matrix[i][i]=eigens[i]
-		'''
+		
 		a,b=size
 		a1=len(distance_matrix)
 		for i in range (a):

@@ -60,7 +60,7 @@ def get_val(data,i,j,d,inde):
                 lis.append((data[i][inde]*data[j][inde])/r)
         d[tuple(li)]+=[lis[-1]]
 
-#align with 121 places for each bond
+#align with 70 places for each bond
 def align(d,size):
         t=2000
         ma=0

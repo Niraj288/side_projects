@@ -48,6 +48,8 @@ def sort_distance(data,ref):
 			#lis.append(r)
 			lis.append((data[i][0]*ref[0])/r)
 	lis.sort() 
+	lis=[0]*(50-len(lis))+lis
+	
 	return lis
 
 def convert_xy(coord,forces):
@@ -56,7 +58,7 @@ def convert_xy(coord,forces):
 		for j in range (len(coord[i])):
 			X.append(sort_distance(map(lambda x : [x[0]]+x[1],coord[i]),[coord[i][j][0]]+coord[i][j][1]))
 			y.append(forces[i][j][1])
-	print len(X),len(y)
+	
 	return np.array(X),np.array(y)
 
 
@@ -88,9 +90,13 @@ def add_data(path):
 	d=np.load('force_data.npy').item()
 	#print d
 	k=coord(path)
-	d['X']+=k[0]
-	d['y']+=k[1]
-	np.save('force_data.npy',d)
+	if len(k[0])>5:
+		print 'Saving for',path,'...'
+		d['X']=k[0]
+		d['y']=k[1]
+		np.save('force_data.npy',d)
+	else:
+		print 'Almost no data found in',path
 
 if __name__=='__main__':
 	add_data(sys.argv[1])
