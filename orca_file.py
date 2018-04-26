@@ -1,9 +1,24 @@
 
 import subprocess
 import os
+import atom_data
 
 def xyz_value(path):
 	data = subprocess.check_output('gcartesian '+path, shell=True)
+	data=data.split('\n')
+	d=atom_data.data(sys.argv[0])
+	ref=1
+	for l in data[1:]:
+		a,x,y,z=l.strip().split()
+		try:
+			int(a)
+			a=d[int(a)]['Symbol']
+		except TypeError:
+			pass
+		data[ref]='    '.join([a,x,y,z])
+		ref+=1
+	'\n'.join(data)
+
 	return '* xyz '+data+'\n'
 
 def func(path):
