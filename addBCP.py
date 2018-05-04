@@ -107,7 +107,7 @@ def addBCP(path,p_id):
                                         length=len(line)
                         try:
                                 float(p_id[str(i2+1)+'.'])
-                                lm[str(i2+1)+'.']=p_id[str(i2+1)+'.']
+                                lm[str(i2+1)+'.']=str(float(p_id[str(i2+1)+'.']))
                         except TypeError:
                                 lm[str(i2+1)+'.']='None'
                         #lines[i]=lines[i].strip()+' '+lmodes[i2]+'\n'
