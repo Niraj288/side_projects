@@ -9,6 +9,7 @@ import addKaTopdb
 import xtb_lmode
 import time
 import addBCP
+import addFreq
 
 #give com file
 def xyz(filename,end):
@@ -51,6 +52,21 @@ def lmode(filename,software='gaussian'):
 		make_lmode_file.make_alm(filename+'.txt','_dh')
 		addKaTopdb.addKa(filename+'.txt','_dh')
 
+def lmodefreq(filename,software='gaussian'):
+	# change things for xtb
+	if software=='xtb':
+		print 'Using xtb output '
+		xtb_lmode.make_alm(filename+'.txt','_ah')
+		addKaTopdb.addKa(filename+'.txt','_ah')
+		xtb_lmode.make_alm(filename+'.txt','_dh')
+		addKaTopdb.addKa(filename+'.txt','_dh')
+	else:
+		if '-l' not in sys.argv:
+			make_lmode_file.make_alm(filename+'.txt','_ah')
+			make_lmode_file.make_alm(filename+'.txt','_dh')
+		addFreq.addFreq(filename+'.txt','_ah')
+		addFreq.addFreq(filename+'.txt','_dh')
+
 def BCP(filename):
 	addBCP.job(filename)
 
@@ -68,11 +84,15 @@ def job(path):
 	hbonds(filename)
 	print 'Calculation done in',time.time()-curr,'seconds'
 	if '-xtb' in sys.argv and '-l' in sys.argv:
-		print 'Calculating local modes for stb files ...'
+		print 'Calculating local modes for xtb files ...'
 		lmode(filename,'xtb')
 	elif '-l' in sys.argv:
 		print 'Calculating local modes ...'
 		lmode(filename)
+	if '-f' in sys.argv:
+		print 'Calculating local modes frequencies ...'
+		lmodefreq(filename)
+
 	if '-d' in sys.argv:
 		print 'Fetching electron density at BCP (a.u) ...'
 		BCP(filename)
@@ -82,6 +102,7 @@ if __name__ == "__main__":
 	if len(sys.argv)<2:
 		print '-c for carbon-hydrogen bond'
 		print '-l for local mode calculation'
+		print '-f for frequency calculation'
 		print '-d for density at BCP from .sum file'
 	else:
 		job(sys.argv[1])
