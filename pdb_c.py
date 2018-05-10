@@ -137,7 +137,7 @@ def result(arr1,arr2,mi,ma):
 #returns [donar id,[(hydrogen id,acceptor id),....]]
 def output(data):
     d,donars,arr_a,arr_h,refe_a,refe_h,n_heavy_pdb,n_light_pdb,n_heavy,n_light,refe_d,coord,file_ref=data 
-    res=result(arr_a,arr_h,1.6,2.9)
+    res=result(arr_a,arr_h,1.4,3.0)
     lis=[]
     h_count=0
     for i in res:
