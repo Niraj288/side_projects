@@ -10,6 +10,7 @@ import xtb_lmode
 import time
 import addBCP
 import addFreq
+import addLPCont
 
 #give com file
 def xyz(filename,end):
@@ -96,6 +97,10 @@ def job(path):
 	if '-d' in sys.argv:
 		print 'Fetching electron density at BCP (a.u) ...'
 		BCP(filename)
+
+	if '-LP' in sys.argv:
+		print 'Adding all lone pair contribution to BD* of H ...'
+		addLPCont.job(filename+'.txt')
 	print 'Done!!'
 
 if __name__ == "__main__":
@@ -104,6 +109,7 @@ if __name__ == "__main__":
 		print '-l for local mode calculation'
 		print '-f for frequency calculation'
 		print '-d for density at BCP from .sum file'
+		print '-LP for lone pair contribution from .g09.out file'
 	else:
 		job(sys.argv[1])
 
