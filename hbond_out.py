@@ -15,6 +15,9 @@ import addCharges
 
 #give com file
 def xyz(filename,end):
+	if end==xyz:
+		return
+	print 'Making xyz ...'
 	print 'Exit status :',module.make_xyz(filename+'.'+end)
 
 def hbonds(filename):
@@ -80,7 +83,6 @@ def job(path):
 		filename=li[0]
 	
 	if path[-4:]!='.txt':
-		print 'Making xyz ...'
 		xyz(filename,li[-1])
 		print 'Calculating H-Bonds ...'
 		curr=time.time()
