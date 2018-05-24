@@ -172,7 +172,24 @@ def write_o(path1,out,d):
     file.write("Filename : "+d['file_pdb']+'\n')
     file.write("Total number of heavy atoms : "+str(n_heavy_pdb)+'\n')
     file.write("Total number of light atoms : "+str(n_light_pdb)+'\n\n')
-    file.write("Number of hydrogen bonds possible : "+str(h_count)+'\n\n')
+    
+    h_c=0
+    for item in out[0]:
+        a,b=item 
+        for i in b:
+            j,k=i 
+            hid=str(j)
+            dist=str(round_sig(distance(coord[int(hid)],coord[refe_d[a]]),5))
+            if d[a][2] in ['C'] or d[k][2] not in ['O','N','F','C'] or d[k][2]=='-' or d[a][2]=='-':
+                continue
+            if d[a][2]=='S' and dist < 3.5:
+                continue
+            if distance(coord[refe_d[a]],coord[refe_d[k]]) < 1.7:
+                continue
+            h_c+=1
+
+    file.write("Number of hydrogen bonds possible : "+str(h_c)+'\n\n')
+    #file.write("Number of hydrogen bonds possible : "+str(h_count)+'\n\n')
     if file_ref:
         file.write('File format : \nDonarResidueId donarResidueType donarChain donarSymbol donarAtomId, HydrogenAtomId, acceptorAtomId acceptorResidueId acceptorResidueType, acceptorChain acceptorSymbol (acceptorAtomId, hydrogenAtomId) D-H...A hydrogenBondLength \n\n')
     else:
