@@ -7,29 +7,28 @@ import sys
 
 #metals=['Co','Rh','Ni','Pd','Pt','Ir','I']
 
-def func(path,keyword,ref,d,n):
-        filename=path
+def func(filename,d):
+        
         file =open(filename,'r')
         lines=file.readlines()
         file.close()
-
+        ref=0
+        lis=[]
         for line in lines:
-                if 'Total' in line:
-                        continue
-                li=line.strip().split()
-                try:
-                        int(li[0][-1])
-                        j=0
-                        while j<len(li):
-                                try:
-                                        int(li[0][j])
-                                        nam,id,charge =li[0][:j],li[0][j:].strip(),li[1]
-                                        break
-                                except ValueError:
-                                        j+=1
-                except ValueError:
-                        nam,id,charge=li[0],li[1],li[2]
-                d[id]=charge
+
+                if ref==1: 
+                        if len(line.strip().split())==0:
+                                break
+                        try:
+                                float(line.strip().split()[0])
+                        except ValueError:
+                                break
+                if ref==1:
+                        lis+=line.strip().split()
+                if 'Mulliken Charges' in line:
+                        ref=1
+        for id in range (len(lis)):
+                d[str(id+1)]=str(float(lis[id]))
 
 def get_ids(path,suffix,d):
         f=open(path,'r')
@@ -92,7 +91,7 @@ def addC(path,p_id):
                                         length=len(line)
                         try:
                                 float(p_id[str(i2+1)+'.'][0])
-                                lm[str(i2+1)+'.']=' '.join(p_id[str(i2+1)+'.'])
+                                lm[str(i2+1)+'.']="{:>15} {:>15}".format(*p_id[str(i2+1)+'.'])
                         except ValueError:
                                 lm[str(i2+1)+'.']='None'
                         #lines[i]=lines[i].strip()+' '+lmodes[i2]+'\n'
@@ -112,20 +111,19 @@ def addC(path,p_id):
         g.close()
 
 
-def job(filename):
+def job(path): # give fchk 
         ref=0
         d={}
         n=0
         
-        path=filename+'.nbo'#raw_input("Enter .sum path : ")
-        func(path,'BCP',ref,d,n)
-        txt_path=filename+'.txt'#raw_input("Enter .txt path : ")
-        p_id=get_ids(txt_path,'_ah',d)     
+        filename=path.split('/')[-1].split('.')[0]
+        func(path,d)
+        p_id=get_ids(filename+'.txt','_ah',d)     
         #print p_id	
-        addC(txt_path,p_id)
+        addC(filename+'.txt',p_id)
 
 if __name__=='__main__':
-        job(sys.argv[1].split('.')[0])
+        job(sys.argv[1])
 
 
 

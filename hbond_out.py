@@ -11,6 +11,7 @@ import time
 import addBCP
 import addFreq
 import addLPCont
+import addCharges
 
 #give com file
 def xyz(filename,end):
@@ -77,13 +78,17 @@ def job(path):
 		filename='.'.join(li[:-1])
 	else:
 		filename=li[0]
-	print 'Making xyz ...'
-	xyz(filename,li[-1])
 	
-	print 'Calculating H-Bonds ...'
-	curr=time.time()
-	hbonds(filename)
-	print 'Calculation done in',time.time()-curr,'seconds'
+	if path[-4:]!='.txt':
+		print 'Making xyz ...'
+		xyz(filename,li[-1])
+		print 'Calculating H-Bonds ...'
+		curr=time.time()
+		hbonds(filename)
+		print 'Calculation done in',time.time()-curr,'seconds'
+	else:
+		print 'Adding elements to .txt ...'
+	
 	if '-xtb' in sys.argv and '-l' in sys.argv:
 		print 'Calculating local modes for xtb files ...'
 		lmode(filename,'xtb')
@@ -101,15 +106,21 @@ def job(path):
 	if '-LP' in sys.argv:
 		print 'Adding all lone pair contribution to BD* of H ...'
 		addLPCont.job(filename+'.txt')
+
+	if '-Charg' in sys.argv:
+		print 'Adding Acceptor and Hydrogen charges ...'
+		addCharges.job(filename+'.fchk')
 	print 'Done!!'
 
 if __name__ == "__main__":
 	if len(sys.argv)<2:
-		print '-c for carbon-hydrogen bond'
-		print '-l for local mode calculation'
-		print '-f for frequency calculation'
+		print '-c for carbon-hydrogen bond from .fchk file'
+		print '-l for local mode calculation from .fchk file'
+		print '-f for frequency calculation from .fchk'
+		print '-Charg for charges from .fchk file'
 		print '-d for density at BCP from .sum file'
-		print '-LP for lone pair contribution from .g09.out file'
+		print '-LP for lone pair contribution from nbo calculations in .g09.out file'
+		
 	else:
 		job(sys.argv[1])
 
