@@ -8,6 +8,7 @@ import make_lmode_file
 import addKaTopdb
 import xtb_lmode
 import time
+import addC
 import addBCP
 import addFreq
 import addLPCont
@@ -112,6 +113,11 @@ def job(path):
 	if '-Charg' in sys.argv:
 		print 'Adding Acceptor and Hydrogen charges ...'
 		addCharges.job(filename+'.fchk')
+
+	if '-C' in sys.argv:
+		print 'Adding Acceptor and Hydrogen charges from NBO calculations ...'
+		addC.job(filename+'.g09.out')
+
 	print 'Done!!'
 
 if __name__ == "__main__":
@@ -119,8 +125,9 @@ if __name__ == "__main__":
 		print '-c for carbon-hydrogen bond from .fchk file'
 		print '-l for local mode calculation from .fchk file'
 		print '-f for frequency calculation from .fchk'
-		print '-Charg for charges from .fchk file'
+		print '-Charg for charges from .fchk file (Mulliken charges)'
 		print '-d for density at BCP from .sum file'
+		print '-C for charges from .g09.out file (NBO population analysis)'
 		print '-LP for lone pair contribution from nbo calculations in .g09.out file'
 		
 	else:
