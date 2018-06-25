@@ -32,7 +32,7 @@ def coord(path):
 	bl=[]
 	ref=0
 	last=0.0
-	key="Normal "
+	key="Normal termination of Gaussian"
 	index=0
 	e0=atom_data.data(sys.argv[0])
 	e={}
