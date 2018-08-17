@@ -25,9 +25,9 @@ def job():
 		alld=amb.get_coord(sys.argv[1],sys.argv[2])
 		np.save('dict.npy',alld)
 		print 'Done in '+str(time.time()-t)+' seconds'
-	print alld[0]
+	#print alld[0]
 	f=open('clusters.txt','w')
-	total=100
+	total=1000
 	for i in range (total):
 		progress(i, total, status='Progress ')
 		d,links_h,links_o,hbonds,obonds=data.data(alld[i])

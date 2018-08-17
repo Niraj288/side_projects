@@ -33,7 +33,7 @@ def connectivity(d,links_h,links_o,hbonds,obonds):
 
 def write_o(graph,d):
 	#file=open('output.txt','w')
-	st='mers ....'
+	st='mers ....\n'
 	mers={}
 	for i in graph:
 		if len(i) not in mers:
