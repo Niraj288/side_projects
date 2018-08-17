@@ -3,10 +3,7 @@ import copy
 import sys
 sys.setrecursionlimit(1500)
 
-vs=set()
-liss=[]
-def connect(d,item,links_o,links_h,hbonds,obonds):
-	global vs,liss
+def connect(d,item,links_o,links_h,hbonds,obonds,vs,liss):
 	nstate=[]
 	vs.add(item)
 	liss.append(item)
@@ -21,21 +18,35 @@ def connect(d,item,links_o,links_h,hbonds,obonds):
 	#print item,nstate
 	for state in nstate:
 		if state not in vs:
-			connect(d,state,links_o,links_h,hbonds,obonds)
+			connect(d,state,links_o,links_h,hbonds,obonds,vs,liss)
 
 def connectivity(d,links_h,links_o,hbonds,obonds):
 	fli=[]
-	global vs,liss
+	vs=set()
+	liss=[]
 	for item in d:
 		if item not in vs:
 			liss=[]
-			connect(d,item,links_o,links_h,hbonds,obonds)
+			connect(d,item,links_o,links_h,hbonds,obonds,vs,liss)
 			fli.append(copy.copy(liss))
 	return fli
+
+def write_o(graph,d):
+	#file=open('output.txt','w')
+	st='mers ....'
+	mers={}
+	for i in graph:
+		if len(i) not in mers:
+			mers[len(i)]=[i]
+		else:
+			mers[len(i)].append(i)
+	for i in mers:
+		st+= str(i/3)+' '+str(len(mers[i]))+'\n'
+	return st 
 
 if __name__=='__main__':
 	
 	d,links_h,links_o,hbonds,obonds=data.data()
 	graph=connectivity(d,links_h,links_o,hbonds,obonds)
-	for i in graph:
-		print len(i)
+	#print links_o
+	print write_o(graph,d)
