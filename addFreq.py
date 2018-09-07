@@ -75,6 +75,7 @@ def addFreq(path,suffix):
 	g=open(path,'w')
 	g.write(''.join(lines))
 	g.close()
+	return lm
 
 '''
 for i in os.listdir('.'):

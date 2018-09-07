@@ -109,6 +109,7 @@ def addC(path,p_id):
         g=open(path,'w')
         g.write(''.join(lines))
         g.close()
+        return lm 
 
 
 def job(path): # give fchk 
@@ -120,7 +121,7 @@ def job(path): # give fchk
         func(path,d)
         p_id=get_ids(filename+'.txt','_ah',d)     
         #print p_id	
-        addC(filename+'.txt',p_id)
+        return addC(filename+'.txt',p_id)
 
 if __name__=='__main__':
         job(sys.argv[1])

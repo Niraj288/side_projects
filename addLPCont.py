@@ -79,6 +79,7 @@ def addLP_BD(path,p_id):
         g=open(path,'w')
         g.write(''.join(lines))
         g.close()
+        return lm
 
 def job(path):
         dic=get_ids(path,suffix='_ah')
@@ -122,7 +123,7 @@ def job(path):
                 h=tu[0]
                 p_id[h]=d[tu]
         #print p_id
-        addLP_BD(path,p_id)
+        return addLP_BD(path,p_id)
 
 
 if __name__=='__main__':

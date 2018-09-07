@@ -125,6 +125,7 @@ def addBCP(path,p_id):
         g=open(path,'w')
         g.write(''.join(lines))
         g.close()
+        return lm 
 
 
 def job(filename):
@@ -183,10 +184,9 @@ def job(filename):
 		sheet.write(i_ref,8,d[(index-1,'comment')])
         	i_ref+=1        
         	
-
-        addBCP(txt_path,p_id)
         print 'Making Excel file for aimall calculation...'
         workbook.save(filename+'.xls')
+        return addBCP(txt_path,p_id)
 
 if __name__=='__main__':
         job(sys.argv[1].split('.')[0])
