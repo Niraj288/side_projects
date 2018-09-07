@@ -36,7 +36,7 @@ if __name__=='__main__':
 	b=sys.argv[2]
 	frame=1000
 
-	get_coord(file,topo,frame)
+	dic=get_coord(file,topo)[frame]
 
 
 

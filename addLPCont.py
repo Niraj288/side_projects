@@ -116,7 +116,8 @@ def job(path):
 
                 if 'SECOND ORDER PERTURBATION THEORY ANALYSIS' in line:
                         ref=1
-
+        if ref==0:
+                raise Exception("No SECOND ORDER PERTURBATION THEORY ANALYSIS found !!")
         for tu in d:
                 h=tu[0]
                 p_id[h]=d[tu]

@@ -30,7 +30,8 @@ def func(filename,d):
                         ref=2
                 if 'Summary of Natural Population Analysis:' in line:
                         ref=1
-        #print lis
+        if ref==0:
+                raise Exception("No summarry for Natural Population analysis found !!")
         for id in range (len(lis)):
                 #print lis[id],id
                 d[str(id+1)]=str(float(lis[id]))
