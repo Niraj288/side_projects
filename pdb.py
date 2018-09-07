@@ -152,6 +152,7 @@ def write_o(path1,out,d):
     st=''
     count=0
     st_d,b_d={},{}
+    lm={}
     for item in out[0]:
         a,b=item
         li1=[str(refe_d[a]),'[',str(d[a][4]),']',d[a][1],d[a][3],d[a][2]] 
@@ -180,6 +181,7 @@ def write_o(path1,out,d):
             else:
                 b_d[db].append(st0)
             file.write(st0)
+            lm[str(count)+'.']=[d[k][2]+'-H...'+d[a][2],str(refe_d[a])+'-'+hid,dist]
             #st+=str(count)+'.'+' '*(5-(len(str(count))))+d[k][2]+'-H...'+d[a][2]+'   '+d[k][3]+'...'+d[a][3]+'\n'
     
     file.write('\n')
@@ -191,6 +193,7 @@ def write_o(path1,out,d):
     #file.write(st+'\n\n')
     file.write("...Termination of the program ....")
     file.close()
+    return lm
 
 def make_xyz(path):
     f=open(path,'r')
@@ -232,7 +235,7 @@ def job(path1,path2):
     #path2=sys.argv[2]#path2 or raw_input('Enter xyz path : ')
     data=data_extraction(path1,path2)
     out=output(data)
-    write_o(path1,out,data[0])
+    return write_o(path1,out,data[0])
 
 
 
