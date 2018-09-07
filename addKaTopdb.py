@@ -24,7 +24,7 @@ def lmode(path):
 		elif ref_l==3:
 			bond,q_n,ka,wa=line.strip().split()[5:8]+[line.strip().split()[9]]
 			if '?' in line:
-				d.append('?    ')
+				d.append(ka+'(?)')
 			else:
 				d.append(ka)
 		if ref_l==4:
