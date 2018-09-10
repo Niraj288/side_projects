@@ -13,6 +13,7 @@ import addBCP
 import addFreq
 import addLPCont
 import addCharges
+import addRing
 import xlwt
 
 def make_excel(d,filename):
@@ -69,6 +70,11 @@ def make_excel(d,filename):
     	if i=='C':
     		ref+=1
     		sheet.write(0,ref,'Charges(NBO)')
+    		for j in d[i]:
+    			sheet.write(int(j[:-1]),ref,d[i][j])
+    	if i=='R':
+    		ref+=1
+    		sheet.write(0,ref,'Intra-HB')
     		for j in d[i]:
     			sheet.write(int(j[:-1]),ref,d[i][j])
 
@@ -192,6 +198,11 @@ def job(path):
 		C=addC.job(filename+'.g09.out')
 		lis_excel['C']=C
 
+	if '-R' in sys.argv:
+		print 'Doing Intramolecular analysis ...'
+		R=addRing.job(filename+'.txt')
+		lis_excel['R']=R
+
 	make_excel(lis_excel,filename)
 
 	print 'Done!!'
@@ -205,6 +216,7 @@ if __name__ == "__main__":
 		print '-d for density at BCP from .sum file'
 		print '-C for charges from .g09.out file (NBO population analysis)'
 		print '-LP for lone pair contribution from nbo calculations in .g09.out file'
+		print '-R to do Intramolecular analysis'
 		
 	else:
 		job(sys.argv[1])
