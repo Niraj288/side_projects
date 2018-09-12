@@ -64,14 +64,22 @@ def make_excel(d,filename):
     			sheet.write(int(j[:-1]),ref,d[i][j])
     	if i=='charg':
     		ref+=1
-    		sheet.write(0,ref,'MullikenCharges')
+    		sheet.write(0,ref,'AcceptorCharge(NBO)')
+    		sheet.write(0,ref+1,'DonarCharge(NBO)')
     		for j in d[i]:
+    			a,b=j.strip().split()
     			sheet.write(int(j[:-1]),ref,d[i][j])
+    			sheet.write(int(j[:-1]),ref+1,d[i][j])
+    		ref+=1
     	if i=='C':
     		ref+=1
-    		sheet.write(0,ref,'Charges(NBO)')
+    		sheet.write(0,ref,'AcceptorCharge(NBO)')
+    		sheet.write(0,ref+1,'DonarCharge(NBO)')
     		for j in d[i]:
+    			a,b=j.strip().split()
     			sheet.write(int(j[:-1]),ref,d[i][j])
+    			sheet.write(int(j[:-1]),ref+1,d[i][j])
+    		ref+=1
     	if i=='R':
     		ref+=1
     		sheet.write(0,ref,'Intra-HB')
