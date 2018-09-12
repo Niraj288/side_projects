@@ -59,27 +59,31 @@ def make_excel(d,filename):
     		ref+=1
     	if i=='bcp':
     		ref+=1
-    		sheet.write(0,ref,'K(r)atBCP')
+    		sheet.write(0,ref,'H(r)atBCP')
     		for j in d[i]:
     			sheet.write(int(j[:-1]),ref,d[i][j])
     	if i=='charg':
     		ref+=1
-    		sheet.write(0,ref,'AcceptorCharge(NBO)')
-    		sheet.write(0,ref+1,'DonarCharge(NBO)')
+    		sheet.write(0,ref,'AcceptorCharge(Mulliken)')
+    		sheet.write(0,ref+1,'DonarCharge(Mulliken)')
+    		sheet.write(0,ref+2,'Chargediff(Mulliken)')
     		for j in d[i]:
     			a,b=j.strip().split()
-    			sheet.write(int(j[:-1]),ref,d[i][j])
-    			sheet.write(int(j[:-1]),ref+1,d[i][j])
-    		ref+=1
+    			sheet.write(int(j[:-1]),ref,a)
+    			sheet.write(int(j[:-1]),ref+1,b)
+    			sheet.write(int(j[:-1]),ref+2,a-b)
+    		ref+=2
     	if i=='C':
     		ref+=1
     		sheet.write(0,ref,'AcceptorCharge(NBO)')
     		sheet.write(0,ref+1,'DonarCharge(NBO)')
+    		sheet.write(0,ref+2,'Chargediff(NBO)')
     		for j in d[i]:
     			a,b=j.strip().split()
-    			sheet.write(int(j[:-1]),ref,d[i][j])
-    			sheet.write(int(j[:-1]),ref+1,d[i][j])
-    		ref+=1
+    			sheet.write(int(j[:-1]),ref,a)
+    			sheet.write(int(j[:-1]),ref+1,b)
+    			sheet.write(int(j[:-1]),ref+2,a-b)
+    		ref+=2
     	if i=='R':
     		ref+=1
     		sheet.write(0,ref,'Intra-HB')
