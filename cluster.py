@@ -67,5 +67,5 @@ def data(path,pdb_ref=0):
   X=data_extraction(path,pdb_ref)
   return X 
 
-cluster(data('/Users/47510753/Downloads/wateX.txt',1))
-#cluster(data('/Users/47510753/Downloads/test-2.pdb',0))
+#cluster(data('/Users/47510753/Downloads/wateX.txt',1))
+cluster(data('/Users/47510753/Downloads/test-2.pdb',0))
