@@ -1,5 +1,5 @@
 
-def orbital():
+def orbitals():
   st="""****
   H     0 
   S   3   1.00

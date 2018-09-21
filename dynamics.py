@@ -417,7 +417,7 @@ def data_extraction(path,pdb_ref):
 				kli.append(h_refe[j])
 				obonds[h_refe[j]]=[o_refe[i[0]]]
 		hbonds[o_refe[i[0]]]=kli
-	'''
+	
 	graph=connectivity(d,links_h,links_o,hbonds)
 	write_o(graph,d)
 	for i in graph:
@@ -428,6 +428,7 @@ def data_extraction(path,pdb_ref):
 	print 'rings ...'
 	rings=np.load('rings.npy').item()
 	'''
+	'''
 	rings={}
 	for i in d:
 		if 1 or d[i][0]=='O':
@@ -435,14 +436,14 @@ def data_extraction(path,pdb_ref):
 			rings[i]=ring 
 	
 	'''
-	
+	'''
 	main_ring=[]
 	for i in rings:
 		ring=rings[i]
 		if ring!=None:
 			pass
 			#print len(ring)
-		if ring!=None and len(ring)/2==80:
+		if ring!=None and len(ring)/2==6:
 			if set(ring) not in main_ring:
 				main_ring.append(set(ring))
 				ring_set=[]
@@ -455,6 +456,7 @@ def data_extraction(path,pdb_ref):
 
 	#d2=boundary(d)
 	#d3=cross_check(hbonds,d2)
+	'''
 
 
 
