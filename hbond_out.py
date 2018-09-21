@@ -43,9 +43,15 @@ def make_excel(d,filename):
     		sheet.write(0,ref+1,'Ka(Donor)')
     		a,b=d[i]
     		for j in a:
-    			sheet.write(int(j[:-1]),ref,a[j])
+			if '?' in a[j]:
+				sheet.write(int(j[:-1]),ref,a[j][:-3])
+			else:
+    				sheet.write(int(j[:-1]),ref,a[j])
     		for j in b:
-    			sheet.write(int(j[:-1]),ref+1,b[j])
+			if '?' in b[j]:
+                                sheet.write(int(j[:-1]),ref,b[j][:-3])
+                        else:
+    				sheet.write(int(j[:-1]),ref+1,b[j])
     		ref+=1
     	if i=='lf':
     		ref+=1
@@ -68,10 +74,10 @@ def make_excel(d,filename):
     		sheet.write(0,ref+1,'DonarCharge(Mulliken)')
     		sheet.write(0,ref+2,'Chargediff(Mulliken)')
     		for j in d[i]:
-    			a,b=j.strip().split()
+    			a,b=d[i][j].strip().split()
     			sheet.write(int(j[:-1]),ref,a)
     			sheet.write(int(j[:-1]),ref+1,b)
-    			sheet.write(int(j[:-1]),ref+2,a-b)
+    			sheet.write(int(j[:-1]),ref+2,float(b)-float(a))
     		ref+=2
     	if i=='C':
     		ref+=1
@@ -79,17 +85,23 @@ def make_excel(d,filename):
     		sheet.write(0,ref+1,'DonarCharge(NBO)')
     		sheet.write(0,ref+2,'Chargediff(NBO)')
     		for j in d[i]:
-    			a,b=j.strip().split()
+			#print d[j][i]
+    			a,b=d[i][j].strip().split()
     			sheet.write(int(j[:-1]),ref,a)
     			sheet.write(int(j[:-1]),ref+1,b)
-    			sheet.write(int(j[:-1]),ref+2,a-b)
+    			sheet.write(int(j[:-1]),ref+2,float(b)-float(a))
     		ref+=2
     	if i=='R':
     		ref+=1
     		sheet.write(0,ref,'Intra-HB')
     		for j in d[i]:
     			sheet.write(int(j[:-1]),ref,d[i][j])
-
+	
+	if i=='lp':
+                ref+=1
+                sheet.write(0,ref,'LPtoBD*')
+                for j in d[i]:
+                        sheet.write(int(j[:-1]),ref,d[i][j])
 
     workbook.save(filename+'.xls')
 

@@ -4,7 +4,6 @@ import scipy.spatial as spatial
 import os
 import hb_connections as hb
 import math
-from pathlib import Path
 
 def xyz(filename,end):
 	if end==xyz:
