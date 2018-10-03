@@ -43,7 +43,7 @@ def selection_(path):
 		print h,'id '+i.strip()+','+j.strip()
 		cmd.select(h,'id '+i.strip()+','+j.strip())
 
-selection_('/Users/47510753/Desktop/To-Niraj/test2/5e61-qm4.txt')
+selection_('/Users/47510753/Desktop/To-Niraj/1R4g/1r4g-qm5.txt')
 if __name__=='__main__':
 	selection_('/Users/47510753/Desktop/To-Niraj/test2/1r4g-qm5.txt')
 	#selection_(sys.argv[1])

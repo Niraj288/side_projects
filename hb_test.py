@@ -36,9 +36,9 @@ def make_excel(d,suffix):
 def make_output():
 	dic={}
 	for i in os.listdir(sys.argv[1]):
-		if i[-4:]=='.xyz':
+		if i[-5:]=='.fchk':
 			print 'Procession the file '+i
-			#hbond_out.job(i)
+			os.system('python ~/Documents/side_projects/hbond_out.py '+i+' -R')
 			kd=make_xl_ab.xl(i.split('/')[-1].split('.')[0]+'.txt')
 			for j in kd:
 				if j not in dic:
