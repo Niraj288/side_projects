@@ -109,7 +109,7 @@ def addBCP(path,p_id):
                                 float(p_id[str(i2+1)+'.'])
                                 lm[str(i2+1)+'.']=str(float(p_id[str(i2+1)+'.'])*627.51*-1/(0.539**3))
                         except TypeError:
-                                lm[str(i2+1)+'.']='None'
+                                lm[str(i2+1)+'.']='0.0'
                         #lines[i]=lines[i].strip()+' '+lmodes[i2]+'\n'
                         i2+=1
         j=0

@@ -31,6 +31,8 @@ class connections:
 	    f.close()
 	    ref=1
 	    for i in lines[2:]:
+	    	if len(i.strip().split())==1:
+				break
 	        if len(i.strip().split())==0:
 	            continue
 	        a,x,y,z=i.strip().split()
@@ -132,6 +134,14 @@ class connections:
 	    x = np.dot(b0xb1, b1xb2)
 	    
 	    return self.round_sig(np.degrees(np.arctan2(y, x)))
+
+	def distance(self,a,b):
+		x1,y1,z1=self.d[a][1:]
+		x2,y2,z2=self.d[b][1:]
+		return math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)
+
+	def atom_name(self,a):
+		return self.d[a][0]
 
 
 if __name__=='__main__':
