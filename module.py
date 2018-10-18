@@ -98,7 +98,7 @@ def filter_xyz(path,suf):
     g.close()
 
 def make_xyz(path):
-    if path.split('.')[-1]!='pdb' and os.system('babel '+path+' '+path.split('.')[0]+'.xyz')==0:
+    if os.system('babel '+path+' '+path.split('.')[0]+'.xyz')==0:
         return 0
     sym={'15':'P','14':'Si','1':'H','7':'N','8':'O','6':'C','53':'I','36':'Kr','9':'F','16':'S'}
     if path.split('.')[-1]=='fchk':
@@ -259,6 +259,7 @@ $LocMod $End
     f.close()
 
     os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm' +' >'+' '+filename+'.out')
+
 
 
             

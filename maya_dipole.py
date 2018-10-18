@@ -182,12 +182,12 @@ def bonds(coord):
             if distance([x1,y1,z1],[x2,y2,z2])<1.6:
                 
                 if a=='C' and b=='O':
-                    arrow(a+str(i)+'_'+b+str(j),[x1,y1,z1],[x1-x2,y1-y2,z1-z2])
+                    #arrow(a+str(i)+'_'+b+str(j),[x1,y1,z1],[x1-x2,y1-y2,z1-z2])
                     make_bond(a+str(i)+'-'+b+str(j),[x1,y1,z1],[x2,y2,z2],2)
                     
                 elif a=='O' and b=='C':
                     
-                    arrow(a+str(i)+'_'+b+str(j),[x2,y2,z2],[x2-x1,y2-y1,z2-z1])
+                    #arrow(a+str(i)+'_'+b+str(j),[x2,y2,z2],[x2-x1,y2-y1,z2-z1])
                     make_bond(a+str(i)+'-'+b+str(j),[x1,y1,z1],[x2,y2,z2],2)
                 else:
                     make_bond(a+str(i)+'-'+b+str(j),[x1,y1,z1],[x2,y2,z2])
@@ -202,6 +202,7 @@ def render_(file):
     for li in coord:
         a,x,y,z=li
         cmds.sphere(name=a+str(ref),r=rad[a])
+        arrow('dipole',[x,y,z],dipole[ref])
         cmds.move(float(x),float(y),float(z))
         if a in ['C','Si','Kr']:
             cmds.sets(forceElement='blinn1SG')
@@ -212,7 +213,7 @@ def render_(file):
         #arrow(a+str(ref),[x,y,z],dipole[ref-1])
         ref+=1
     bonds(coord)
-    arrow('dipole',[0,0,0],[0,-1,0])
+    #arrow('dipole',[0,0,0],[0,-1,0])
         
 render_('')
         

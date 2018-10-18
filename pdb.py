@@ -45,7 +45,7 @@ def data_extraction(path1,path2):
     for line in list1:
         if "TER" in line.split()[0]:
             break
-        if line.split()[0] in ['ATOM','HETATM']:
+        if line.split()[0] in ['ATOM']:
             #print line
             id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
             s=line.strip().split()[-1]
@@ -64,7 +64,7 @@ def data_extraction(path1,path2):
     coord={}
     for line in list2[2:]:
         if len(line.strip().split())<4:
-            continue
+            break
         s,x,y,z=line.strip().split()
         if s!='H':
             #print 'hd'

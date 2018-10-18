@@ -76,6 +76,7 @@ def connection_analysis(path,ma=3.0,mi=2.0):
 				dih=con.dihedral(lis)
 				li=[a,b]
 				li.sort()
+				#print li
 				all_res[tuple(li)]=[dih,distance(d[a][1:],d[b][1:]),d[a][0]+'-'+d[b][0]]
 
 	return all_res

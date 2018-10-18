@@ -49,10 +49,10 @@ def data_extraction(path1,path2):
     l=0
     n_heavy_pdb,n_light_pdb=0,0
     ref_l1=1
-    for line in list1:
+    for line in list1[2:]:
         if path1==path2:
             if len(line.strip().split())<4:
-                continue
+                break
             id=ref_l1
             d[id]=['','',line.split()[0],'','']
             ref_l1+=1
@@ -89,7 +89,7 @@ def data_extraction(path1,path2):
     coord={}
     for line in list2[2:]:
         if len(line.strip().split())<4:
-            continue
+            break
         s,x,y,z=line.strip().split()
         if s!='H':
             #print 'hd'

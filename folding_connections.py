@@ -59,6 +59,16 @@ def pre_data(path,ma,mi):
                 	if d[i][0] in ['N','O']:
                 		re1.append(i)
                 h_li = (point_tree.query_ball_point(nitro[j], 1.2))
+                count_h = 0
+                for i in h_li:
+                	if d[i+1][0]=='H':
+                		count_h+=1
+                	#print nitro_d[j], count_h
+
+                #print count_h
+                if count_h>1:
+                	continue
+
                 for i in h_li:
                 	if d[i+1][0]=='H':
                 		result.append([nitro_d[j],i+1,re1])
@@ -68,7 +78,7 @@ def pre_data(path,ma,mi):
 def distance(a,b):
     return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
 
-def connection_analysis(path,ma=3.0,mi=2.0):
+def connection_analysis(path,ma=6.0,mi=2.0):
 	all_res={}
 	res,d=pre_data(path,ma,mi)
 	for n,a,li in res:
@@ -76,9 +86,9 @@ def connection_analysis(path,ma=3.0,mi=2.0):
 		for b in li:
 			con=hb.connections('.'.join(path.split('.')[:-1])+'.xyz')
 			lis = con.bfs(a-1,b-1)
-			if len(lis)==5:
-				li=[a,b]
-				li.sort()
+			if len(lis)==5 and distance(d[a][1:],d[b][1:]) < 10.0:
+				li=[n,a,b]
+				#print n,a,b
 				all_res[tuple(li)]=[lis,d[n][0]+d[a][0]+'-'+d[b][0]]
 
 	return all_res
@@ -87,15 +97,9 @@ def connection_analysis(path,ma=3.0,mi=2.0):
 
 if __name__=='__main__':
 	cd = {}
-	scr = connection_analysis(sys.argv[1],ma=3.5,mi=2.0)
-	print scr
-	for i,j in scr:
-		li = [i,j]
-		li.sort()
-		if tuple(li) in cd:
-			print 'Duplicate values found!'
-		else:
-			cd[tuple(li)]=None
+	scr = connection_analysis(sys.argv[1],ma=3.0,mi=2.0)
+	for i in scr:
+		print i
 
 
 

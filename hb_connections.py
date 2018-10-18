@@ -104,6 +104,8 @@ class connections:
 	    return []
 
 	def round_sig(self,x, sig=3):
+		if x == 0.0:
+			return 0.0
 		return round(x, sig-int(floor(log10(abs(x))))-1)
 
 	def dihedral(self,lis):
@@ -132,13 +134,12 @@ class connections:
 
 	    y = np.dot(b0xb1_x_b1xb2, b1)*(1.0/np.linalg.norm(b1))
 	    x = np.dot(b0xb1, b1xb2)
-	    
 	    return self.round_sig(np.degrees(np.arctan2(y, x)))
 
 	def distance(self,a,b):
 		x1,y1,z1=self.d[a][1:]
 		x2,y2,z2=self.d[b][1:]
-		return math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)
+		return self.round_sig(math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2),4)
 
 	def atom_name(self,a):
 		return self.d[a][0]

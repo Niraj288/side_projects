@@ -3,6 +3,7 @@ import os
 import sys
 import folding_connections as fdc
 import EvsT
+import pdb_analysis_c5 as c5
 
 def get_sequence(lines):
         d={}
@@ -22,6 +23,34 @@ def get_sequence(lines):
         arr = [d[i] for i in lis]
         return ' '.join(arr)
 
+def make_gaff_xleap(f,ty = 'gout'):
+  name = '.'.join(f.split('/')[-1].split('.')[:-1])
+  st = 'antechamber -i file -fi type -o name.mol2 -fo mol2 -c bcc -s 2'
+  st = st.replace('name',name)
+  st = st.replace('type',ty)
+  st = st.replace('file',f)
+
+  os.system(st)
+
+  st = 'parmchk -i name.mol2 -f mol2 -o name.frcmod'
+  st = st.replace('name',name)
+
+  os.system(st)
+
+  st = """source leaprc.gaff
+SUS = loadmol2 name.mol2 
+loadamberparams name.frcmod
+saveoff SUS sus.lib 
+saveamberparm SUS name.prmtop name.inpcrd 
+quit
+"""
+  st = st.replace('name',name)
+  g = open('xleap_input','w')
+  g.write(st)
+  g.close()
+
+  return
+
 def make_xleap_input(f):
 	file = open(f,'r')
 	lines= file.readlines()
@@ -30,7 +59,7 @@ def make_xleap_input(f):
 	name = '.'.join(f.split('/')[-1].split('.')[:-1])
 
 	st=''
-	st+='source oldff/leaprc.ff14SB\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
+	st+='source oldff/leaprc.ff99SB\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
 	seq = get_sequence(lines)
 	st+=name +' = sequence { '+seq+' }\n'
 
@@ -80,8 +109,8 @@ def heating():
             value2=50.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
-            value2=1.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
+            value2=0.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -108,8 +137,8 @@ def heating():
             value2=100.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
-            value2=1.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
+            value2=0.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -136,8 +165,8 @@ def heating():
             value2=150.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
-            value2=1.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
+            value2=0.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -164,8 +193,8 @@ def heating():
             value2=200.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
-            value2=1.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
+            value2=0.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -192,7 +221,7 @@ def heating():
             value2=250.,    /
 &wt type='TAUTP', istep1=0,istep2=20000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=20000,value1=1.0,                             
+&wt type='REST', istep1=0,istep2=20000,value1=0.0,                             
             value2=1.0,  /
 &wt type='END'  /
 
@@ -217,11 +246,11 @@ def heating():
  /
 
 &wt type='TEMP0', istep1=0,istep2=10000,value1=300.,
-            value2=300.,    /
+            value2=350.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=1.,                             
-            value2=1.,  /
+&wt type='REST', istep1=0,istep2=10000,value1=0.,                             
+            value2=0.,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -232,7 +261,7 @@ def heating():
 
 def equillibrium():
         f = open('equil1.in','w')
-        steps = '5000'
+        steps = '25000'
         st="""Stage 2 equilibration 1 0-2.5ns
 
 &cntrl
@@ -240,18 +269,18 @@ def equillibrium():
   nstlim=steps, 
   ntc=2, ntf=2,
   ntt=1, 
-  ntpr=200, ntwx=200,
+  ntpr=50, ntwx=50,
   ntb=0, igb=1,
   cut=20,rgbmax=999.,
   pencut=-0.001,
   nmropt=1,
  /
 
-&wt type='TEMP0', istep1=0,istep2=steps,value1=300.,
-            value2=300.,    /
+&wt type='TEMP0', istep1=0,istep2=steps,value1=350.,
+            value2=350.,    /
 &wt type='TAUTP', istep1=0,istep2=steps,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=steps,value1=1.,            
+&wt type='REST', istep1=0,istep2=steps,value1=0.,            
             value2=1.,  /
 &wt type='END'  /
 
@@ -265,8 +294,9 @@ def equillibrium():
         f.close()
 
 
-def make_rst_file(name):
-  
+def make_rst_file(file, ty):
+  name = '.'.join(file.split('/')[-1].split('.')[:-1])
+  st=''
   if 'unmodified' in os.getcwd():
     print 'Unmodified category !'
     f = open('dist.RST','w')
@@ -274,33 +304,50 @@ def make_rst_file(name):
     f.close()
     return
 
-  dic = fdc.connection_analysis(name+'_linear.pdb')
-  st=''
+  if ty!='pdb':
+    dic = fdc.connection_analysis(file)
+  else:
+
+    dic = fdc.connection_analysis(name+'_linear.pdb')
+  
   print 'Modified Category !'
-  for i,j in dic:
-    if dic[(i,j)][-1]=='NH-N':
-      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(i)+', '+str(j)+' , r1= 1.6, r2= 2.2, r3= 2.2, r4= 2.7, rk2= 40.27408, rk3= 40.27408, /\n'
-    elif dic[(i,j)][-1]=='NH-O':
+  for i,j,k in dic:
+    ar,br = j,k 
+    if 1 and dic[(i,j,k)][-1]=='NH-N':
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.8, r2= 2.18, r3= 2.18, r4= 2.5, rk2= 40., rk3= 40., /\n'
+    elif 1 and dic[(i,j,k)][-1]=='NH-O':
       #continue
-      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(i)+', '+str(j)+' , r1= 1.52, r2= 2.12, r3= 2.12, r4= 2.52, rk2= 35.959, rk3= 35.959, /\n'
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.8, r2= 2.12, r3= 2.2, r4= 2.5, rk2= 35., rk3= 35., /\n'
+    elif 0 and o and dic[(i,j)][-1]=='CH-O':
+      #continue
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.72, r2= 2.3, r3= 2.5, r4= 3.0, rk2= 35.959, rk3= 35.959, /\n'
+    elif 0 and dic[(i,j)][-1]=='CH-N':
+      #continue
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.72, r2= 2.32, r3= 2.5, r4= 3.0, rk2= 35.959, rk3= 35.959, /\n'
+  
 
   f = open('dist.RST','w')
   f.write(st)
   f.close()
 
 
-def run_folding(file):
+def run_folding(file,ty = None):
         name = '.'.join(file.split('/')[-1].split('.')[:-1])
 
         print 'Initializing protein folding for '+name+ ' ...'
 
-        print 'Making a straight chain with topology files ...'
-        make_xleap_input(file)
+        
+        if ty!='pdb':
+          #pass
+          make_gaff_xleap(file, ty)
+        else:
+          print 'Making a straight chain with topology files ...'
+          make_xleap_input(file)
         os.system('xleap -f xleap_input')
-
+        
         print 'Making RST file ...'
-        make_rst_file(name)
-
+        make_rst_file(file, ty)
+        
         print 'Initial Minimization of the structure ...'
         minimization()
         st = 'sander -O -i min1.in -o min1.out -p name.prmtop -c name.inpcrd -r min1.rst'
@@ -329,7 +376,8 @@ sander -O -i heat6.in -p name.prmtop -c heat5.rst -r heat6.rst -o heat6.out -x h
 	
 	
 if __name__=='__main__':
-  run_folding(sys.argv[1])
+  ty = sys.argv[1].split('.')[-1]
+  run_folding(sys.argv[1],ty)
   print 'Running analysis on equil1.out ...'
   EvsT.job(sys.argv[1])
   #make_rst_file(sys.argv[1])

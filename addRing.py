@@ -148,31 +148,47 @@ def test(path):
         #print l_d
         p_id={}
         con=hb.connections(path[:-4]+'.xyz')
-        st=''
+        st_d = {}
         for i in dic:
             a,b,c=dic[i]
             #print a,b,c
+            a,b,c = map(int,[a,b,c])
             refe_lis=con.bfs(int(a)-1,int(c)-1)
             dist=con.distance(int(a),int(c))
+            hbl = con.distance(int(b),int(c))
             if len(refe_lis)==0:
                 p_id[i]='None'
             elif len(refe_lis)==4:
                 p_id[i]='I('+str(len(refe_lis)+1)+')'+'('+str(con.dihedral(refe_lis))+')'
-                st+=con.atom_name(int(a))+'-'+con.atom_name(int(c))+' '+str(dist)+' '+str(con.dihedral(refe_lis))+' '+l_d[i]+'\n'
+                bond = con.atom_name(int(a))+'-'+con.atom_name(int(c))
+                if bond in st_d:
+                    st_d[bond]+=bond+' '+str(dist)+' '+str(con.dihedral(refe_lis))+' '+l_d[i]+' '+str(hbl)+' '+str(a)+' '+str(b)+' '+str(c)+'\n'
+                else:
+                    st_d[bond] = bond+' '+str(dist)+' '+str(con.dihedral(refe_lis))+' '+l_d[i]+' '+str(hbl)+' '+str(a)+' '+str(b)+' '+str(c)+'\n'
             else:
                 p_id[i]='I('+str(len(refe_lis)+1)+')'
             
 
         
-        return st
+        return st_d
 
 
 if __name__=='__main__':
-    f=open('test_results','w')
+
+    d_c = {}
     for i in os.listdir('.'):
         if i[-4:]=='.txt':
-            f.write(test(i))
-    f.close()
+            print i 
+            d = test(i)
+            #print d
+            for i in d:
+                if i in d_c:
+                    d_c[i]+=d[i]
+                else:
+                    d_c[i]=d[i]
+    for i in d_c:
+        print d_c[i]+'\n\n'
+    
 
 
 
