@@ -107,7 +107,7 @@ $LocMod $End
 	f.write(get_ids(path.split('/')[-1].split('.')[0]+'.txt',suffix))
 	f.close()
 
-	os.system("lmode -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
+	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
 	
 
 

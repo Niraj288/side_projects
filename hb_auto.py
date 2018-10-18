@@ -8,6 +8,7 @@ import make_xl
 def make_excel(d,suffix):
 	bonds={}
 	b,f=[],[]
+	m=-9999
 	for i in d:
 	 	#b=d[i]
 	 	f.append(i)
@@ -15,19 +16,20 @@ def make_excel(d,suffix):
 	 		if j not in b:
 	 			b.append(j)
 	 		bonds[j,i]=d[i][j]
+	 		if m<len(d[i][j]):
+	 			m=len(d[i][j])
 
 	wb=xlwt.Workbook() 
 	sheet = wb.add_sheet('Version1')
-
 	r=0
 	mul=-1
 	for i in b:
 		mul+=1
 		c=0
-		r=25*mul
+		r=(m+3)*mul
 		sheet.write(r,c,i)
 		for j in f:
-			r=25*mul+1
+			r=(m+3)*mul+1
 			sheet.write(r,c,j)
 			if (i,j) not in bonds:
 				c+=2
@@ -44,7 +46,7 @@ def make_excel(d,suffix):
 				r+=1
 			c+=2
 			
-	print 'Making Excel files ...'		
+	print 'Making Excel files for '+suffix+' ...'		
 	if suffix=='_ah':	
 		wb.save('acceptors.xls')
 	else:

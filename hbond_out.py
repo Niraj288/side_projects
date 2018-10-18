@@ -192,7 +192,8 @@ def job(path):
 	
 	if '-xtb' in sys.argv and '-l' in sys.argv:
 		print 'Calculating local modes for xtb files ...'
-		lmode(filename,'xtb')
+		l = lmode(filename,'xtb')
+		lis_excel['l']=l
 	elif '-l' in sys.argv:
 		print 'Calculating local modes ...'
 		l=lmode(filename)
