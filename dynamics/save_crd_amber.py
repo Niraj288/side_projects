@@ -11,9 +11,9 @@ def distance(a,b):
 
 def get_coord(file,topo,frame=None):
 	t=md.load(file,top=topo)
-
+	refe=0
 	alld={}
-	for frame in range (len(t.xyz)):
+	for frame in range (0,len(t.xyz),10):
 		lis=t.xyz[frame]
 
 		d={}
@@ -28,7 +28,8 @@ def get_coord(file,topo,frame=None):
 					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
 					ref+=1
 
-		alld[frame]=d 
+		alld[refe]=d
+		refe+=1 
 	return alld
 
 if __name__=='__main__':
