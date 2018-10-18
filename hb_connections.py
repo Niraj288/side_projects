@@ -147,7 +147,7 @@ class connections:
 if __name__=='__main__':
 	con=connections(sys.argv[1])
 
-	lis = con.bfs(15,35)
+	lis = con.bfs(5,6)
 	print lis
 	print con.dihedral(lis) 
 

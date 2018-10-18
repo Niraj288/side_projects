@@ -58,7 +58,7 @@ def distance(a,b):
 def get_donars(o,h,o_refe,h_refe,o_boun,h_boun,ab,bb,cb):
     point_tree = spatial.cKDTree(h)
     li_a={}
-    le=1.0
+    le=1.2
     for i in range (len(o)):
         li1=(point_tree.query_ball_point(o[i], le))
         if i in o_boun:
@@ -231,6 +231,7 @@ def data(d=None):
 	#a,b,c=31.269,31.175,31.073
 	#a,b,c=100,100,100
 	a,b,c=349.018620,352.848620,353.568620
+	a,b,c=1000,1000,1000
 	#a,b,c=10,10,10
 
 	for i in range (1,len(d)+1):
@@ -259,7 +260,7 @@ def data(d=None):
 	links_o=get_donars(o,h,o_refe,h_refe,o_boun,h_boun,a,b,c)
 	links_h=get_acceptors(links_o)
 
-	res=result(o,h,1.2,2.8,o_boun,h_boun,a,b,c)
+	res=result(o,h,1.3,2.8,o_boun,h_boun,a,b,c)
 	
 	hbonds={}
 	obonds={}

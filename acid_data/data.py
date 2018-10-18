@@ -6,12 +6,15 @@ from sklearn.metrics import mean_squared_error, r2_score
 import xlwt
 from sklearn import metrics
 import math
+<<<<<<< Updated upstream
 from sklearn.model_selection import KFold
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.neural_network import MLPRegressor
 from sklearn import preprocessing, cross_validation, neighbors, svm
 import random
 import sklearn.preprocessing as ps 
+=======
+>>>>>>> Stashed changes
 
 def add_data(data):
 	pka=np.load('/'.join(sys.argv[0].split('/')[:-1])+'/pka.npy').item()
@@ -45,7 +48,11 @@ def make_excel(data,name,func):
 		sheet.write(row,col,i.split('/')[-1])
 		sheet.write(row,col+1,float(a[-1]))
 		sheet.write(row,col+2,float(b[-1]))
+<<<<<<< Updated upstream
 		#sheet.write(row,col+3,float(c[-1]))
+=======
+		sheet.write(row,col+3,float(c[-1]))
+>>>>>>> Stashed changes
 		sheet.write(row,col+4,float(d))
 		sheet.write(row,col+5,float(pr[row-1][0]))
 		sheet.write(row,col+6,float(pr[row-1][0]-float(d)))
@@ -55,6 +62,7 @@ def make_excel(data,name,func):
 def mad(data, axis=None):
     return np.mean(np.absolute(data - np.mean(data, axis)), axis)
 
+<<<<<<< Updated upstream
 def prin2(X_train, y_train, X_test, y_test, file):
 	t=100
 	#clf = MLPRegressor()#solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
@@ -100,11 +108,17 @@ def validate(X,y,file):
         print 'cross validation MAE',ref/5
         return ref/5
 
+=======
+>>>>>>> Stashed changes
 def prin(X,y,file):
 	clf = LinearRegression() #(n_jobs=processors)
 
 	clf.fit(X, y)
+<<<<<<< Updated upstream
 	print 'Training size',len(X)
+=======
+
+>>>>>>> Stashed changes
 	accuracy = clf.score(X,y)
 	print 'accuracy',accuracy,'\n'
 	RMSE=math.sqrt(metrics.mean_squared_error(y,clf.predict(X)))
@@ -127,8 +141,12 @@ def prin(X,y,file):
 	#print 'R2 score',r2_score(X,pr)
 	#test(X,y,file,clf.coef_[0],clf.intercept_[0])
 	print RMSE,MAE,MAD,clf.coef_[0][3],clf.coef_[0][4],clf.coef_[0][0],clf.coef_[0][1],clf.coef_[0][2],clf.intercept_[0],accuracy
+<<<<<<< Updated upstream
 	#return clf 
 	return pr
+=======
+	return pr,clf 
+>>>>>>> Stashed changes
 
 
 
@@ -139,11 +157,14 @@ def make_fit(data):
 		#print i,data[i]
 		file.append(i.split('/')[-1])
 		a,b,c,d=data[i]
-		a1=(float(a[-1])+float(b[-1]))/2
-		b1=float(c[-1]) 
+		a1=(float(a[2])+float(b[2]))/2
+		b1=float(c[2]) 
 		X+=[[a1**2,b1**2,a1*b1,a1,b1]]
 		y+=[[float(d)]]
+<<<<<<< Updated upstream
 	#validate(X,y,file)
+=======
+>>>>>>> Stashed changes
 	return prin(X,y,file)
 	
 def test(data):
@@ -217,8 +238,11 @@ def phenol_fit(data):
 		a1,b1=a[-1],b[-1]
 		X+=[[a1**2,b1**2,a1*b1,a1,b1]]
 		y+=[[float(f)]]
+<<<<<<< Updated upstream
 	#return prin2(X[:91],y[:91],X[91:],y[91:],file)
 	#return validate(X,y,file)
+=======
+>>>>>>> Stashed changes
 	return prin(X,y,file)
 
 def symm_fit(data):
@@ -232,6 +256,7 @@ def symm_fit(data):
 		y+=[[float(e)]]
 	prin(X,y,file)
 
+<<<<<<< Updated upstream
 def predict(func,data,pred,t):
         print 'Predicting ...\n'
         
@@ -323,6 +348,67 @@ def calc(data):
                 #test(d)
                 #symm_fit(d)
         make_excel(d,data.split('/')[-1].split('.')[0]+'.xls',name_c[sys.argv[2]])#make_fit)
+=======
+def predict(func,d,pred):
+	print 'Predicting ...\n'
+	clf=func(d)[1]
+	X=[]
+        file=[]
+        for i in pred:
+                file.append(i.split('/')[-1])
+                a,b=pred[i]
+                a1,b1=a[-1],b[-1]
+                X+=[[a1**2,b1**2,a1*b1,a1,b1]]
+	pr=clf.predict(X)
+	for i in range (len(file)):
+		print file[i]+' '*(20-len(file)),pr[i][0]
+
+def calc(data):
+	name_c={'-r':phenol_fit,'-a':amide_fit,'-p':phenol_fit,'-m':make_fit,'-s':symm_fit,'-t':test}
+	pka=np.load('/'.join(sys.argv[0].split('/')[:-1])+'/pka.npy').item()
+	d=np.load(data).item()
+	rm_lis=[]
+	ref=0
+	#print d
+	pred={}
+	for i in d:
+		if len(d[i])==4:
+			break
+		name=i.split('/')[-1].split('.')[0]
+		try:
+			d[i]=d[i]+[pka[name]]
+		except KeyError:
+			ref=1
+			pk=raw_input('Enter pka for '+i+' : ')
+			
+			if len(pk)==0:
+				rm_lis.append(i)
+			elif pk=='p':
+				rm_lis.append(i)
+				pred[i]=d[i]
+			else:
+				pka[name]=float(pk)
+				d[i]=d[i]+[pka[name]]
+	for i in rm_lis:
+		del d[i]
+	if ref:
+		if raw_input('Save data : ')=='y':
+			np.save('/'.join(sys.argv[0].split('/')[:-1])+'/pka.npy',pka)
+	if len(pred)!=0:
+                predict(name_c[sys.argv[2]],d,pred)
+                return
+	if len(sys.argv)>2:
+		name_c[sys.argv[2]](d)
+	else:
+		make_fit(d)
+
+	#amide_fit(d)
+	#make_fit(d)
+	#phenol_fit(d)
+	#test(d)
+	#symm_fit(d)
+	#make_excel(d,raw_input('Enter excel name : '),make_fit)
+>>>>>>> Stashed changes
 
 calc(sys.argv[1])
 #add_data(sys.argv[1])
