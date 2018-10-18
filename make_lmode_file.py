@@ -58,7 +58,9 @@ $LocMod $End
 	f.write(s3)
 	f.write(s4+'\n')
 	f.close()
+
 	#/Users/47510753/Downloads/LocalMode-2016/lmodes.exe
+
 	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
 
 '''
@@ -69,4 +71,9 @@ for i in lis:
 		break
 '''
 #make_alm(sys.argv[1])
+
+if __name__=='__main__':
+	make_alm(sys.argv[1],'')
+
+
 	

@@ -10,7 +10,7 @@ def pdb_xyz(file):
     for line in list1:
         if len(line.strip().split())==0:
             continue
-        if "END" in line.split()[0]:
+        if "TER" in line.split()[0]:
             break
         if 'ATOM' in line.split()[0]: #use HETATM only when required
             print line
@@ -143,6 +143,7 @@ def make_xyz(path):
     g=open(path[:-4]+'.xyz','w')
     g.write(lis)
     g.close()
+    filter_xyz(path,4)
     return 1
 
 def zmatrix(file):
@@ -258,6 +259,7 @@ $LocMod $End
     f.close()
 
     os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm' +' >'+' '+filename+'.out')
+
 
 
             

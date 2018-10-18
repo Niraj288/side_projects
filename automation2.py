@@ -4,21 +4,7 @@ import sys
 
 path=sys.argv[1]
 
-def output():
-	global path
-	filename=path.split('/')[-1].split('.')[0]+'.out2'
-	li=[]
-	f=open(filename,'r')
-	lines=f.readlines()
-	f.close()
-	for line in lines:
-		l=line.strip().split()
-		if len(l)==0:
-			continue
-		if 'Frequencies'==l[0]:
-			li+=l[1:]
-	print filename.split('.')[0]+'    '+'  '.join(li)
-
+# local mode input for non redandant set of internal coordinates
 def step1(path):
 	#print 'performing step 1 ...'
 	filename=path.split('/')[-1].split('.')[0]
@@ -54,6 +40,7 @@ $LocMod $End
 	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm1' +' >'+' '+filename+'.out1')
 	step2('job.m')
 
+# changing matlab file and including scripts at the end
 def step2(path):
 	#print 'performing step 2 ...'
 	f=open(path,'r')
@@ -107,6 +94,7 @@ printf('\\n\\n')
 	g.close()
 	step4('job-ALMODE.dat',step3('job.m'))
 
+# getting effective hessian matrrix
 def step3(path):
 	#print 'performing step 3 ...'
 	#proc = subprocess.Popen('/usr/local/octave/3.8.0/bin/octave '+path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -124,6 +112,7 @@ def step3(path):
 			st+=i+'\n'
 	return st
 
+# changing ALMODE.dat file by removing hessian part etc.
 def step4(path,ext):
 	#print 'performing step 4 ...'
 	f=open(path,'r')
@@ -188,6 +177,7 @@ def step4(path,ext):
 	g.close()
 	step5()
 
+# DO local mode analysis with the new ALMODE.dat file
 def step5():
 	#print 'performing step 5 ...'
 	global path
@@ -224,6 +214,22 @@ $LocMod $End
 
 	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+'.alm2' +' >'+' '+filename+'.out2')
 	output()
+
+# print out the final frequencies
+def output():
+	global path
+	filename=path.split('/')[-1].split('.')[0]+'.out2'
+	li=[]
+	f=open(filename,'r')
+	lines=f.readlines()
+	f.close()
+	for line in lines:
+		l=line.strip().split()
+		if len(l)==0:
+			continue
+		if 'Frequencies'==l[0]:
+			li+=l[1:]
+	print filename.split('.')[0]+'    '+'  '.join(li)
 
 step1(path)
 
