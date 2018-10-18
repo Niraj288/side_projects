@@ -59,6 +59,7 @@ def pre_data(path,ma,mi):
                 	if d[i][0] in ['N','O']:
                 		re1.append(i)
                 h_li = (point_tree.query_ball_point(nitro[j], 1.2))
+
                 count_h = 0
                 for i in h_li:
                 	if d[i+1][0]=='H':
@@ -78,7 +79,9 @@ def pre_data(path,ma,mi):
 def distance(a,b):
     return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
 
+
 def connection_analysis(path,ma=6.0,mi=2.0):
+
 	all_res={}
 	res,d=pre_data(path,ma,mi)
 	for n,a,li in res:
@@ -86,14 +89,38 @@ def connection_analysis(path,ma=6.0,mi=2.0):
 		for b in li:
 			con=hb.connections('.'.join(path.split('.')[:-1])+'.xyz')
 			lis = con.bfs(a-1,b-1)
+
 			if len(lis)==5 and distance(d[a][1:],d[b][1:]) < 10.0:
 				li=[n,a,b]
 				#print n,a,b
+
 				all_res[tuple(li)]=[lis,d[n][0]+d[a][0]+'-'+d[b][0]]
 
 	return all_res
 
+def make_rst_file(name):
 
+  if 'unmodified' in os.getcwd():
+    print 'Unmodified category !'
+    f = open('dist.RST','w')
+    f.write(st)
+    f.close()
+    return
+
+  dic = connection_analysis(name+'.pdb')
+  st=''
+  print 'Modified Category !'
+  for i,j,k in dic:
+    ar,br = j,k
+    if dic[(i,j,k)][-1]=='NH-N':
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.6, r2= 2.2, r3= 2.3, r4= 2.8, rk2= 40.27408, rk3= 40.27408, /\n'
+    elif dic[(i,j,k)][-1]=='NH-O':
+      #continue
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.52, r2= 2.12, r3= 2.22, r4= 2.8, rk2= 35.959, rk3= 35.959, /\n'
+
+  f = open('dist.RST','w')
+  f.write(st)
+  f.close()
 
 if __name__=='__main__':
 	cd = {}

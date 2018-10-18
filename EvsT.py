@@ -62,7 +62,7 @@ quit"""
 	f.write(st)
 	f.close()
 
-	st2 = 'cpptraj name.prmtop < extract_lowest_frame.trajin > extract_lowest_frame.out'
+	st2 = 'cpptraj.MPI name.prmtop < extract_lowest_frame.trajin > extract_lowest_frame.out'
 	st2 = st2.replace('name',name)
 	print 'Saving lowest conformer as pdb file'
 	os.system(st2)

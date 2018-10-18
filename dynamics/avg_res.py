@@ -27,8 +27,10 @@ def job():
 		print 'Done in '+str(time.time()-t)+' seconds'
 	#print alld[0]
 	f=open('clusters.txt','w')
-	total=1000
+	total=len(alld)
+	#print alld
 	for i in range (total):
+		#print len(alld[i])
 		progress(i, total, status='Progress ')
 		d,links_h,links_o,hbonds,obonds=data.data(alld[i])
 		graph=connections.connectivity(d,links_h,links_o,hbonds,obonds)
