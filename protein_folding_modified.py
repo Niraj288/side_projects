@@ -51,28 +51,29 @@ quit
 
   return
 
-def make_xleap_input(f):
-	file = open(f,'r')
-	lines= file.readlines()
-	file.close()
+def make_xleap_input(f,params):
+        file = open(f,'r')
+        lines= file.readlines()
+        file.close()
 
-	name = '.'.join(f.split('/')[-1].split('.')[:-1])
+        name = '.'.join(f.split('/')[-1].split('.')[:-1])
 
-	st=''
-	st+='source oldff/leaprc.ff99SB\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
-	seq = get_sequence(lines)
-	st+=name +' = sequence { '+seq+' }\n'
+        st=''
+        st+='source ff\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
+        st = st.replace('ff', params['ff'])
+        seq = get_sequence(lines)
+        st+=name +' = sequence { '+seq+' }\n'
 
-	st+='saveoff '+name+' '+name+'_linear.lib\n'
-	st+='savepdb '+name+' '+name+'_linear.pdb\n'
+        st+='saveoff '+name+' '+name+'_linear.lib\n'
+        st+='savepdb '+name+' '+name+'_linear.pdb\n'
 
-	st+='saveamberparm '+name+' '+' '+name+'.prmtop'+' '+name+'.inpcrd\n'
-	st+='quit\n'
-	g = open('xleap_input','w')
-	g.write(st)
-	g.close()
+        st+='saveamberparm '+name+' '+' '+name+'.prmtop'+' '+name+'.inpcrd\n'
+        st+='quit\n'
+        g = open('xleap_input','w')
+        g.write(st)
+        g.close()
 
-	return  
+        return
 
 def minimization():
 	text = """Stage 1 - minimisation
@@ -259,9 +260,9 @@ def heating():
  """)
 	f.close()
 
-def equillibrium():
+def equillibrium(params):
         f = open('equil1.in','w')
-        steps = '25000'
+        steps = params['steps']
         st="""Stage 2 equilibration 1 0-2.5ns
 
 &cntrl
@@ -294,7 +295,8 @@ def equillibrium():
         f.close()
 
 
-def make_rst_file(file, ty):
+def make_rst_file(file, ty, params):
+
   name = '.'.join(file.split('/')[-1].split('.')[:-1])
   st=''
   if 'unmodified' in os.getcwd():
@@ -314,10 +316,10 @@ def make_rst_file(file, ty):
   for i,j,k in dic:
     ar,br = j,k 
     if 1 and dic[(i,j,k)][-1]=='NH-N':
-      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.8, r2= 2.18, r3= 2.18, r4= 2.5, rk2= 40., rk3= 40., /\n'
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= NH-Nd0, r2= NH-Nd1, r3= NH-Nd2, r4= NH-Nd2, rk2= NH-Nk1, rk3= NH-Nk2, /\n'
     elif 1 and dic[(i,j,k)][-1]=='NH-O':
       #continue
-      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.8, r2= 2.12, r3= 2.2, r4= 2.5, rk2= 35., rk3= 35., /\n'
+      st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= NH-Od0, r2= NH-Od1, r3= NH-Od2, r4= NH-Od2, rk2= NH-Ok1, rk3= NH-Ok2, /\n'
     elif 0 and o and dic[(i,j)][-1]=='CH-O':
       #continue
       st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.72, r2= 2.3, r3= 2.5, r4= 3.0, rk2= 35.959, rk3= 35.959, /\n'
@@ -325,13 +327,16 @@ def make_rst_file(file, ty):
       #continue
       st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= 1.72, r2= 2.32, r3= 2.5, r4= 3.0, rk2= 35.959, rk3= 35.959, /\n'
   
+  for i in params:
+    if 'NH' in i:
+      st = st.replace(i,str(params[i]))
 
   f = open('dist.RST','w')
   f.write(st)
   f.close()
 
 
-def run_folding(file,ty = None):
+def run_folding(file, ty, params):
         name = '.'.join(file.split('/')[-1].split('.')[:-1])
 
         print 'Initializing protein folding for '+name+ ' ...'
@@ -342,11 +347,11 @@ def run_folding(file,ty = None):
           make_gaff_xleap(file, ty)
         else:
           print 'Making a straight chain with topology files ...'
-          make_xleap_input(file)
-        os.system('xleap -f xleap_input')
+          make_xleap_input(file,params)
+        os.system('tleap -f xleap_input')
         
         print 'Making RST file ...'
-        make_rst_file(file, ty)
+        make_rst_file(file, ty, params)
         
         print 'Initial Minimization of the structure ...'
         minimization()
@@ -367,7 +372,7 @@ sander -O -i heat6.in -p name.prmtop -c heat5.rst -r heat6.rst -o heat6.out -x h
         os.system(st)
 
         print 'Equillibrium structure simulation ...'
-        equillibrium()
+        equillibrium(params)
         st = """sander -O -i equil1.in -p name.prmtop -c heat6.rst -r equil1.rst -o equil1.out -x equil1.mdcrd"""
         st = st.replace('name',name)
         os.system(st)
@@ -377,7 +382,23 @@ sander -O -i heat6.in -p name.prmtop -c heat5.rst -r heat6.rst -o heat6.out -x h
 	
 if __name__=='__main__':
   ty = sys.argv[1].split('.')[-1]
-  run_folding(sys.argv[1],ty)
+
+  params = {'NH-Nd0':1.5,
+            'NH-Nd1':2.2,
+            'NH-Nd2':2.2,
+            'NH-Nd3':2.8,
+            'NH-Nk1':40.,
+            'NH-Nk2':40.,
+            'NH-Od0':1.5,
+            'NH-Od1':2.18,
+            'NH-Od2':2.18,
+            'NH-Od3':2.8,
+            'NH-Ok1':35.,
+            'NH-Ok2':35.,
+            'steps':500,
+            'ff':'oldff/leaprc.ff99SB'}
+
+  run_folding(sys.argv[1],ty, params)
   print 'Running analysis on equil1.out ...'
   EvsT.job(sys.argv[1])
   #make_rst_file(sys.argv[1])
