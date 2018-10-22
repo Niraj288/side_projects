@@ -110,8 +110,8 @@ def heating():
             value2=50.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
-            value2=0.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
+            value2=1.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -138,8 +138,8 @@ def heating():
             value2=100.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
-            value2=0.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
+            value2=1.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -166,8 +166,8 @@ def heating():
             value2=150.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
-            value2=0.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
+            value2=1.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -194,8 +194,8 @@ def heating():
             value2=200.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=0.0,                             
-            value2=0.0,  /
+&wt type='REST', istep1=0,istep2=10000,value1=1.0,                             
+            value2=1.0,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -222,7 +222,7 @@ def heating():
             value2=250.,    /
 &wt type='TAUTP', istep1=0,istep2=20000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=20000,value1=0.0,                             
+&wt type='REST', istep1=0,istep2=20000,value1=1.0,                             
             value2=1.0,  /
 &wt type='END'  /
 
@@ -250,8 +250,8 @@ def heating():
             value2=350.,    /
 &wt type='TAUTP', istep1=0,istep2=10000,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=10000,value1=0.,                             
-            value2=0.,  /
+&wt type='REST', istep1=0,istep2=10000,value1=1.,                             
+            value2=1.,  /
 &wt type='END'  /
 
  DISANG=dist.RST
@@ -281,7 +281,7 @@ def equillibrium(params):
             value2=350.,    /
 &wt type='TAUTP', istep1=0,istep2=steps,value1=0.1,
             value2=0.1,     /
-&wt type='REST', istep1=0,istep2=steps,value1=0.,            
+&wt type='REST', istep1=0,istep2=steps,value1=1.,            
             value2=1.,  /
 &wt type='END'  /
 
