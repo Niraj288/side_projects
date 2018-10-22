@@ -290,7 +290,7 @@ def equillibrium(params):
  
  
  """
-        st = st.replace('steps',steps)
+        st = st.replace('steps',str(steps))
         f.write(st)
         f.close()
 
