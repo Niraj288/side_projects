@@ -14,7 +14,8 @@ def xyz(filename,end):
 # reading from pdb
 def read_data(path):
 	#xyz(path[:-4],path[-4:])
-	os.system('babel '+path+' '+'.'.join(path.split('.')[:-1])+'.xyz')
+	print 'Not making xyz file'
+	#os.system('babel '+path+' '+'.'.join(path.split('.')[:-1])+'.xyz')
 	f=open(path[:-4]+'.xyz','r')
 	lines=f.readlines()
 	f.close()
