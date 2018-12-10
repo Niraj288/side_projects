@@ -26,7 +26,7 @@ def distance(a,b):
 def chain(r,st):
     l=len(r)
     l_=st[l:]
-    if len(l_)==0 or l_.isdigit():
+    if len(l_)==0 or l_.isdigit() or l_ == 'A':
         chain='backbone'
     else:
         chain='side_chain' 
@@ -148,6 +148,17 @@ def write_o(path1,out,d):
     file.write("Total number of heavy atoms : "+str(n_heavy_pdb)+'\n')
     file.write("Total number of light atoms : "+str(n_light_pdb)+'\n\n')
     file.write("Number of hydrogen bonds possible : "+str(h_count)+'\n\n')
+    file.write("""
+Units:
+    Hydrogen bond length                Angstron
+    Local mode force costant            mDynes/A^2
+    H(r)atBCP                           kcal/mol*A^3
+    Frequencies                         cm^-1
+    LPtoBD*                             kcal/mol
+    Charges                             a.u.
+    Angles                              Degrees
+
+        """)
     file.write('File format : \nDonarResidueId donarResidueType donarChain donarSymbol donarAtomId, HydrogenAtomId, acceptorAtomId acceptorResidueId acceptorResidueType, acceptorChain acceptorSymbol (acceptorAtomId, hydrogenAtomId) D-H...A hydrogenBondLength \n\n')
     st=''
     count=0
