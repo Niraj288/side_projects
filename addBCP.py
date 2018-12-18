@@ -22,6 +22,10 @@ def func(path,keyword,ref,d,n):
                                 d[n,'DelSqRho']=line.strip().split()[2]
                         if 'Bond Ellipticity' in line:
                                 d[n,'Bond Ellipticity']=line.strip().split()[3]
+                        if 'HessRho_EigVals ' in line:
+                                d[n,'HessianEigenValue0'] = line.strip().split()[2]
+                                d[n,'HessianEigenValue1'] = line.strip().split()[3]
+                                d[n,'HessianEigenValue2'] = line.strip().split()[4]
                         if 'V' in line.strip().split():
                                 d[n,'V']=line.strip().split()[2]
                         if 'G' in line.strip().split():
@@ -152,7 +156,10 @@ def job(filename):
         sheet.write(0,5,'G')
         sheet.write(0,6,'K')
         sheet.write(0,7,'L')
-        sheet.write(0,8,'Comments')
+        sheet.write(0,8,'HessianEigenValue0')
+        sheet.write(0,9,'HessianEigenValue1')
+        sheet.write(0,10,'HessianEigenValue2')
+        sheet.write(0,11,'Comments')
         index=1
         max_d=-99999
         for i in d:
@@ -181,11 +188,14 @@ def job(filename):
                 sheet.write(i_ref,5,d[(index-1,'G')])
                 sheet.write(i_ref,6,d[(index-1,'K')])
                 sheet.write(i_ref,7,d[(index-1,'L')])
-		sheet.write(i_ref,8,d[(index-1,'comment')])
+                sheet.write(i_ref,8,d[(index-1,'HessianEigenValue0')])
+                sheet.write(i_ref,9,d[(index-1,'HessianEigenValue1')])
+                sheet.write(i_ref,10,d[(index-1,'HessianEigenValue2')])
+		sheet.write(i_ref,11,d[(index-1,'comment')])
         	i_ref+=1        
         	
         print 'Making Excel file for aimall calculation...'
-        workbook.save(filename+'.xls')
+        workbook.save(filename+'_BCP.xls')
         return addBCP(txt_path,p_id)
 
 if __name__=='__main__':
