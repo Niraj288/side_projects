@@ -3,6 +3,7 @@ import scipy.spatial as spatial
 import time
 import math
 from math import log10, floor
+from scipy import interpolate
 import os
 import sys
 
@@ -17,11 +18,130 @@ def get_donars(arr_h,refe1,arr):
             li_a[i]=refe1[li1[0]]
     return li_a
 
+def angle(a,b,c):
+        a = np.array(a)
+        b = np.array(b)
+        c = np.array(c)
+
+        ba = a - b
+        bc = c - b
+
+        cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+        angle = np.arccos(cosine_angle)
+
+        return np.degrees(angle)
+
 def round_sig(x, sig=2):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
 def distance(a,b):
+    a = map(float, a)
+    b = map(float, b)
     return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
+
+def cartoon(point, li0, d, n = 2):
+    #print self.get_backbone()
+    if d[point][3] != 'backbone':
+        return None 
+    
+    ind = li0.index(point)
+    fli = []
+
+    count = 0
+    c1, c2 = 0, 0
+    while len(fli) < n+1:
+        if d[li0[ind+count]][2] == 'C':
+            fli.append(li0[ind+count])
+        count += 1
+        if ind+count >= len(li0): 
+            break
+    c1 = count
+
+    count = 1
+    while len(fli) < 2*n+1:
+        d[li0[ind-count]][2]
+        if d[li0[ind-count]][2] == 'C':
+            fli.append(li0[ind-count])
+        count+=1
+        if ind-count <= 0:
+            c2 = 2*n+1 - len(fli)
+            break
+
+    if c2:
+        count = c1
+        while len(fli) < 2*n+1:
+            if d[li0[ind+count]][2] == 'C':
+                fli.append(li0[ind+count])
+            count += 1
+            if ind+count >= len(li0):
+                break
+
+
+
+
+    fli.sort()
+    #print fli
+    coord = [map(float,d[i][-3:]) for i in fli]
+    coord = np.array(coord)
+    x,y,z = coord[:,0],coord[:,1],coord[:,2]
+    try:
+        tck, u = interpolate.splprep([x,y,z], s=3)
+    except ValueError:
+        return None
+    x_knots, y_knots, z_knots = interpolate.splev(tck[0], tck)
+    u_fine = np.linspace(0,1,len(coord)*10)
+
+    x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
+
+    coord_fine = []
+
+    for i in range (len(x_fine)):
+        coord_fine.append([x_fine[i],y_fine[i],z_fine[i]])
+
+    coord_fine = np.array(coord_fine)
+
+    '''
+    fig2 = plt.figure(2)
+    ax3d = fig2.add_subplot(111, projection='3d')
+    ax3d.plot(x, y, z, 'r*')
+    #ax3d.plot(x_knots, y_knots, z_knots, 'go')
+    ax3d.plot(x_fine, y_fine, z_fine, 'g-')
+
+    fig2.show()
+    plt.show()
+    '''
+
+    #print fli
+    #self.check_cartoon(fli)
+
+    dis = 0
+    for i in range (1,len(coord_fine)-1):
+        #print self.d[fli[i]][-3:],self.d[fli[i-1]][-3:]
+        dis += distance(coord_fine[i],coord_fine[i-1])
+
+    #print dis, distance(d[fli[0]][-3:], d[fli[-1]][-3:])
+
+    res = dis/distance(d[fli[0]][-3:], d[fli[-1]][-3:])
+
+    return res
+
+
+def check_cartoon(point, li0, d):
+    res1 = cartoon(point, li0, d)
+    if not res1:
+        return None
+    res2 = cartoon(point, li0, d, 5)
+
+    #print res1, res2
+
+    if res1 < 1.18 and res2 < 1.2:
+        return 'Beta'
+    elif res1 < 1.18 and res2 > 1.2:
+        return 'Coil' 
+    elif res1 < 2.0 and res2 < 2.5:
+        return 'Alpha'
+    elif res2 > 2.5:
+        return 'Sharp Turn' 
 
 def chain(r,st):
     l=len(r)
@@ -31,6 +151,26 @@ def chain(r,st):
     else:
         chain='side_chain' 
     return chain
+
+def get_backbone(d):
+    li = []
+    for i in d:
+        if d[i][3] == 'backbone':# and self.d[i][2]!='H':
+            li.append(i)
+    #print li
+    return li
+
+def check_alpha(d, li0):
+    
+    for i in d:
+        if d[i][3] != 'backbone' or d[i][2] == 'H':
+            continue
+        else:
+            ct = check_cartoon(i, li0, d)
+            if ct:
+                d[i][3] = ct
+    return d
+
 
 def data_extraction(path1,path2):
     file1,file2=open(path1,'r'),open(path2,'r')
@@ -43,18 +183,21 @@ def data_extraction(path1,path2):
     d['file_pdb']=path1.split('/')[-1]
     n_heavy_pdb,n_light_pdb=0,0
     for line in list1:
-        if "TER" in line.split()[0]:
+        if "END" in line.split()[0]:
             break
         if line.split()[0] in ['ATOM']:
             #print line
             id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
             s=line.strip().split()[-1]
-            d[int(id)]=[at,rt,s,chain(s,at),_0]
+            d[int(id)]=[at,rt,s,chain(s,at),_0, x, y, z]
             l+=1
             if s=='H':
                 n_light_pdb+=1
             else:
                 n_heavy_pdb+=1
+
+    li0 = get_backbone(d)
+    d = check_alpha(d, li0)
 
     refe_h,refe_d,ref_all={},{},1
     refe1,r1,r2={},0,0
@@ -158,7 +301,7 @@ Units:
     Charges                             a.u.
     Angles                              Degrees
 
-        """)
+""")
     file.write('File format : \nDonarResidueId donarResidueType donarChain donarSymbol donarAtomId, HydrogenAtomId, acceptorAtomId acceptorResidueId acceptorResidueType, acceptorChain acceptorSymbol (acceptorAtomId, hydrogenAtomId) D-H...A hydrogenBondLength \n\n')
     st=''
     count=0
@@ -173,6 +316,13 @@ Units:
             hid=str(j)
             if d[k][2] not in ['O','N','F']:
                 continue
+            ang = angle(coord[refe_d[k]],coord[int(hid)],coord[refe_d[a]])
+            '''
+            if ang > 180:
+                ang = 360.0 - ang
+            if ang < 90.0 :
+                continue  
+            '''  
             count+=1
             c=d[k][3]+'-'+d[a][3]
             li2=['[',str(d[k][4]),']',d[k][1],d[k][3],d[k][2],str(refe_d[k])]

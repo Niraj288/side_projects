@@ -29,7 +29,7 @@ def flat_X(X):
 def get_Xy():
 	mat = scipy.io.loadmat('/Users/47510753/Downloads/qm7.mat')
 	coord=mat['X']
-	#print coord
+	print coord.shape
 	coord=flat_X(coord)
 	energy=mat['T']
 	return coord,energy[0]
@@ -68,5 +68,5 @@ def prin(X,y):
 
 X,y=get_Xy()
 
-prin(X,y)
+#prin(X,y)
 

@@ -13,7 +13,7 @@ def get_sequence(lines):
                         break
                 if line.split()[0] in ['ATOM']:
                         #print line
-                        id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
+                        id,at,rt,_0,x,y,z,_1=line.strip().split()[1:9]
                         s=line.strip().split()[-1]
                         d[int(_0)]=rt
                         arr_a.add(int(_0))
@@ -51,6 +51,47 @@ quit
 
   return
 
+
+def make_xleap_input(f,params):
+        
+
+        name = '.'.join(f.split('/')[-1].split('.')[:-1])
+
+        st=''
+        st+='source ff\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
+        st = st.replace('ff', params['ff'])
+        
+        st+= name +'_org = loadPdb '+f+'\n'
+        st+='savepdb '+name+'_org '+name+'_org.pdb\n'
+        st+='quit\n'
+        g = open('xleap_input','w')
+        g.write(st)
+        g.close()
+
+        os.system('tleap -f xleap_input')
+
+        file = open(name+'_org.pdb','r')
+        lines= file.readlines()
+        file.close()
+        seq = get_sequence(lines)
+
+        st=''
+        st+='source ff\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
+        st = st.replace('ff', params['ff'])
+        st+=name +' = sequence { '+seq+' }\n'
+        st+='saveoff '+name+' '+name+'_linear.lib\n'
+        st+='savepdb '+name+' '+name+'_linear.pdb\n'
+        
+
+        st+='saveamberparm '+name+' '+' '+name+'.prmtop'+' '+name+'.inpcrd\n'
+        st+='quit\n'
+        g = open('xleap_input','w')
+        g.write(st)
+        g.close()
+
+        return
+'''
+# Original
 def make_xleap_input(f,params):
         file = open(f,'r')
         lines= file.readlines()
@@ -74,7 +115,7 @@ def make_xleap_input(f,params):
         g.close()
 
         return
-
+'''
 def minimization():
 	text = """Stage 1 - minimisation
 
@@ -310,11 +351,11 @@ def make_rst_file(file, ty, params):
     dic = fdc.connection_analysis(file)
   else:
 
-    dic = fdc.connection_analysis(name+'_linear.pdb')
+    dic = fdc.connection_analysis(name+'_org.pdb')
   
   print 'Modified Category !'
   for i,j,k in dic:
-    ar,br = j,k 
+    ar,br = i,k 
     if 1 and dic[(i,j,k)][-1]=='NH-N':
       st+=' &rst ixpk= 0, nxpk= 0, iat= '+str(ar)+', '+str(br)+' , r1= NH-Nd0, r2= NH-Nd1, r3= NH-Nd2, r4= NH-Nd2, rk2= NH-Nk1, rk3= NH-Nk2, /\n'
     elif 1 and dic[(i,j,k)][-1]=='NH-O':
@@ -351,7 +392,7 @@ def run_folding(file, ty, params):
         os.system('tleap -f xleap_input')
         
         print 'Making RST file ...'
-        make_rst_file(file, ty, params)
+        #make_rst_file(file, ty, params)
         
         print 'Initial Minimization of the structure ...'
         minimization()
@@ -395,7 +436,7 @@ if __name__=='__main__':
             'NH-Od3':2.8,
             'NH-Ok1':35.,
             'NH-Ok2':35.,
-            'steps':500,
+            'steps':25000,
             'ff':'oldff/leaprc.ff99SB'}
 
   run_folding(sys.argv[1],ty, params)

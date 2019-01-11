@@ -16,6 +16,19 @@ def get_donars(arr_h,refe1,arr):
             li_a[i]=refe1[li1[0]]
     return li_a
 
+def angle(a,b,c):
+        a = np.array(a)
+        b = np.array(b)
+        c = np.array(c)
+
+        ba = a - b
+        bc = c - b
+
+        cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+        angle = np.arccos(cosine_angle)
+
+        return np.degrees(angle)
+
 def round_sig(x, sig=2):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
@@ -182,7 +195,7 @@ Units:
     Charges                             a.u.
     Angles                              Degrees
 
-        """)
+""")
     
     h_c=0
     for item in out[0]:
@@ -199,6 +212,11 @@ Units:
                 continue
             if distance(coord[refe_d[a]],coord[refe_d[k]]) < 1.7:
                 continue
+            ang = angle(coord[refe_d[k]],coord[int(hid)],coord[refe_d[a]])
+            if ang > 180:
+                ang = 360.0 - ang
+            if ang < 90.0 :
+                continue  
             h_c+=1
 
     file.write("Number of hydrogen bonds possible : "+str(h_c)+'\n\n')

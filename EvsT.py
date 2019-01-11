@@ -72,6 +72,7 @@ quit"""
 
 def job(file):
 	name = '.'.join(file.split('/')[-1].split('.')[:-1])
+
 	save_plot('equil1.out',name)
 	#module.search_deep('.',save_plot,['.out'])
 
