@@ -36,6 +36,7 @@ def get_ids(path,suffix):
 				s,e=line.index('('),line.index(')')
 				l=line[s+1:e].split(',')
 				st+=[[line.strip().split()[0],l[0],l[1],line.strip().split()[-1]]]
+				#print st[-1]
 				typ.add(line.strip().split()[-1])
 			
 	return st,typ
@@ -66,7 +67,7 @@ def selection_(path):
 		cmd.delete(i)
 		
 
-selection_('/Users/47510753/Desktop/To-Niraj/1R4g/1r4g-qm5.txt')
+selection_('/Users/47510753/Downloads/6gn4.txt')
 if __name__=='__main__':
 	selection_('/Users/47510753/Desktop/To-Niraj/test2/1r4g-qm5.txt')
 	#selection_(sys.argv[1])

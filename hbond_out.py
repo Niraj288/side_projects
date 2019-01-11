@@ -14,6 +14,7 @@ import addFreq
 import addLPCont
 import addCharges
 import addRing
+import addAngle
 import xlwt
 
 def make_excel(d,filename):
@@ -66,6 +67,11 @@ def make_excel(d,filename):
     	if i=='bcp':
     		ref+=1
     		sheet.write(0,ref,'H(r)atBCP')
+    		for j in d[i]:
+    			sheet.write(int(j[:-1]),ref,d[i][j])
+    	if i=='angle':
+    		ref+=1
+    		sheet.write(0,ref,'HB Angle')
     		for j in d[i]:
     			sheet.write(int(j[:-1]),ref,d[i][j])
     	if i=='charg':
@@ -189,6 +195,10 @@ def job(path):
 		lis_excel['hb']=hb
 	else:
 		print 'Adding elements to .txt ...'
+
+	if '-a' in sys.argv:
+		ang = addAngle.job(filename+'.xyz')
+		lis_excel['angle']=ang
 	
 	if '-xtb' in sys.argv and '-l' in sys.argv:
 		print 'Calculating local modes for xtb files ...'
@@ -242,6 +252,7 @@ if __name__ == "__main__":
 		print '-C for charges from .g09.out file (NBO population analysis)'
 		print '-LP for lone pair contribution from nbo calculations in .g09.out file'
 		print '-R to do Intramolecular analysis'
+		print '-a to add HB angle'
 		
 	else:
 		job(sys.argv[1])

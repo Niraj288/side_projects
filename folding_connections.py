@@ -14,8 +14,8 @@ def xyz(filename,end):
 # reading from pdb
 def read_data(path):
 	#xyz(path[:-4],path[-4:])
-	print 'Not making xyz file'
-	#os.system('babel '+path+' '+'.'.join(path.split('.')[:-1])+'.xyz')
+	#print 'Not making xyz file'
+	os.system('babel '+path+' '+'.'.join(path.split('.')[:-1])+'.xyz')
 	f=open(path[:-4]+'.xyz','r')
 	lines=f.readlines()
 	f.close()
@@ -81,7 +81,7 @@ def distance(a,b):
     return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
 
 
-def connection_analysis(path,ma=6.0,mi=2.0):
+def connection_analysis(path,ma=4.0,mi=1.8):
 
 	all_res={}
 	res,d=pre_data(path,ma,mi)
@@ -91,7 +91,7 @@ def connection_analysis(path,ma=6.0,mi=2.0):
 			con=hb.connections('.'.join(path.split('.')[:-1])+'.xyz')
 			lis = con.bfs(a-1,b-1)
 
-			if len(lis)==5 and distance(d[a][1:],d[b][1:]) < 10.0:
+			if len(lis)==5 and distance(d[a][1:],d[b][1:]) < 2.50:
 				li=[n,a,b]
 				#print n,a,b
 

@@ -61,9 +61,9 @@ def make_xleap_input(f,params):
         st=''
         st+='source ff\n'#leaprc.gaff\n'#oldff/leaprc.ff99\n'
         st = st.replace('ff', params['ff'])
-        seq = get_sequence(lines)
-        st+=name +' = sequence { '+seq+' }\n'
-
+        #seq = get_sequence(lines)
+        #st+=name +' = sequence { '+seq+' }\n'
+        st+= name +' = loadPdb '+f+'\n'
         st+='saveoff '+name+' '+name+'_linear.lib\n'
         st+='savepdb '+name+' '+name+'_linear.pdb\n'
 

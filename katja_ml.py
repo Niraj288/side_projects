@@ -3,7 +3,7 @@ import os
 import numpy as np
 import math
 import sys
-import preprocessing
+import preprocessing_conv
 import subprocess
 import module
 import sklearn.preprocessing as ps 
@@ -132,7 +132,7 @@ def prin(X,y,file,dic):
 	t=100
 	#clf = MLPRegressor(solver=dic['solver'],activation=dic['activation'],hidden_layer_sizes=eval(dic['hls']), batch_size = dic['batch_size'], max_iter=dic['max_iter'])
 	#clf = LinearRegression()
-	clf=KernelRidge(alpha=0.001,kernel='laplacian',degree=18)
+	clf=KernelRidge(alpha=0.1,kernel='rbf',degree=18)
 	X_train, X_test, y_train, y_test= cross_validation.train_test_split(X,y,test_size=float(dic['test_size']))
 	clf.fit(X_train, y_train)
 	
@@ -141,14 +141,15 @@ def prin(X,y,file,dic):
 	#scores = cross_val_score(clf, X, y, cv=5)
 	#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
-	accuracy = clf.score(X_train,y_train)
-	print 'accuracy',accuracy,'\n'
-	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,clf.predict(X_test)))
-	MAE=metrics.mean_absolute_error(y_test,clf.predict(X_test))
+	#accuracy = clf.score(X_train,y_train)
+	#print 'accuracy',accuracy,'\n'
+	pr = clf.predict(X_test)
+	print 'RMSE',math.sqrt(metrics.mean_squared_error(y_test,pr))
+	MAE=metrics.mean_absolute_error(y_test,pr)
 	print 'MAE',MAE 
 	#X_test,y_test=X[-t:],y[-t:]
 	#file=file[-t:]
-	pr=clf.predict(X_test)
+	#pr=clf.predict(X_test)
 	print 'Filename                 Percentage Error         Actual Value      Predicted Value           Difference\n'
 	for i in range (len(y_test)):
 		if y_test[i]==0.0:
@@ -263,10 +264,14 @@ def run():
 	#np.save('katja_data.npy',d)
 	X,y=d['X'],d['y']
 	X,y=get_rand(X,y,int(dic['size']))
-	X=add_electron(X,dic)
-	#y=map(lambda x : x*627.51, y)
-	X=process(X,[30,30])
 
+	print X[0]
+	#X=add_electron(X,dic)
+	#y=map(lambda x : x*627.51, y)
+	#X=process(X,[30,30])
+	X = preprocessing_conv.process(X)
+	X = X.reshape(-1,529*45)
+	print X.shape
 	print len(X)
 	#X=ps.scale(X)
 	#min_max_scaler = MinMaxScaler()

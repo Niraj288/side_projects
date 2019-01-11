@@ -16,6 +16,19 @@ def get_donars(arr_h,refe1,arr):
             li_a[i]=refe1[li1[0]]
     return li_a
 
+def angle(a,b,c):
+        a = np.array(a)
+        b = np.array(b)
+        c = np.array(c)
+
+        ba = a - b
+        bc = c - b
+
+        cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+        angle = np.arccos(cosine_angle)
+
+        return np.degrees(angle)
+
 def round_sig(x, sig=2):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
@@ -183,7 +196,7 @@ Units:
     Charges                             a.u.
     Angles                              Degrees
 
-        """)
+""")
     if file_ref:
         file.write('File format : \nDonarResidueId donarResidueType donarChain donarSymbol donarAtomId, HydrogenAtomId, acceptorAtomId acceptorResidueId acceptorResidueType, acceptorChain acceptorSymbol (acceptorAtomId, hydrogenAtomId) D-H...A hydrogenBondLength \n\n')
     else:
@@ -205,6 +218,11 @@ Units:
             hid=str(j)
             if d[k][2] not in ['O','N','F'] or d[k][2]=='-' or d[a][2]=='-':
                 continue
+            ang = angle(coord[refe_d[k]],coord[int(hid)],coord[refe_d[a]])
+            if ang > 180:
+                ang = 360.0 - ang
+            if ang < 90.0 :
+                continue 
             count+=1
             c=d[k][3]+'-'+d[a][3]
             #print refe_d

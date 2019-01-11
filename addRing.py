@@ -31,7 +31,7 @@ def get_ids(path,suffix='_ah'):
                 if ref==2 or ref==3:
                         ref+=1
                 if ref==4:
-                        s,e=kr_st
+                        s,e=kr_st # 10,28
                         #print line[s:e]
                         l=line[s:e].split(',')
                         st=l 
@@ -102,6 +102,16 @@ def job(path):
         
         return addRing(path,p_id)
 
+def make_input_pucker(lis,d,count):
+    st0 = ''
+    for i in lis:
+        st0+='    '.join(map(str,d[i][1:]))+'\n'
+
+    f = open('P'+str(d[lis[0]][0])+'-'+str(d[lis[0]][0])+'_'+str(count)+'.dat','w')
+    f.write(st0)
+    f.close()
+
+
 def test(path):
 
         def lmode_id(path):
@@ -149,16 +159,22 @@ def test(path):
         p_id={}
         con=hb.connections(path[:-4]+'.xyz')
         st_d = {}
+        count = 0
         for i in dic:
             a,b,c=dic[i]
             #print a,b,c
             a,b,c = map(int,[a,b,c])
             refe_lis=con.bfs(int(a)-1,int(c)-1)
+            
             dist=con.distance(int(a),int(c))
             hbl = con.distance(int(b),int(c))
             if len(refe_lis)==0:
                 p_id[i]='None'
             elif len(refe_lis)==4:
+
+                make_input_pucker(refe_lis+[b],con.d,count)
+                count+=1
+
                 p_id[i]='I('+str(len(refe_lis)+1)+')'+'('+str(con.dihedral(refe_lis))+')'
                 bond = con.atom_name(int(a))+'-'+con.atom_name(int(c))
                 if bond in st_d:
@@ -189,10 +205,6 @@ if __name__=='__main__':
     for i in d_c:
         print d_c[i]+'\n\n'
     
-
-
-
-
 
 
 
