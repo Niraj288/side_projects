@@ -8,13 +8,19 @@ def connect(d,item,links_o,links_h,hbonds,obonds,vs,liss):
 	vs.add(item)
 	liss.append(item)
 	#print item
-	if d[item][0]=='H':
-		if item in obonds:
-			nstate=links_h[item]+obonds[item]
-		else:
-			nstate=links_h[item]
-	elif d[item][0]=='O':
-		nstate=links_o[item]+hbonds[item]
+	try:
+		if d[item][0]=='H':
+			if item in obonds:
+				nstate=links_h[item]+obonds[item]
+			else:
+				nstate=links_h[item]
+		elif d[item][0]=='O':
+			if item in hbonds:
+				nstate=links_o[item]+hbonds[item]
+			else:
+				nstate=links_o[item]
+	except KeyError:
+		pass
 	#print item,nstate
 	for state in nstate:
 		if state not in vs:
@@ -40,13 +46,17 @@ def write_o(graph,d):
 			mers[len(i)]=[i]
 		else:
 			mers[len(i)].append(i)
+	st+='  Atoms         Frequency\n'
 	for i in mers:
-		st+= str(i/3)+' '+str(len(mers[i]))+'\n'
-	return st 
+		st+= "{:>6}  {:>10}".format(*[str(i),str(len(mers[i]))])+'\n'
+	return mers, st 
 
 if __name__=='__main__':
 	
-	d,links_h,links_o,hbonds,obonds=data.data()
+	d,links_h,links_o,hbonds,obonds=data.data(None, 100, 100, 100)
+	#print links_o[1183]
+	#print obonds
 	graph=connectivity(d,links_h,links_o,hbonds,obonds)
 	#print links_o
-	print write_o(graph,d)
+	mers, st = write_o(graph,d)
+	print st

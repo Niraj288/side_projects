@@ -1,7 +1,9 @@
 import data
 import matplotlib.pyplot as plt
+import copy
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import style
+import multiprocessing as mp
 style.use("ggplot")
 
 class Stack:
@@ -33,15 +35,91 @@ class Queue:
     def isEmpty(self):
         return len(self.list) == 0
 
-def next_state(cstate,d,links_h,links_o,hbonds,obonds):
-	if d[cstate][0]=='H':
-		try:
-			nstate=links_h[cstate]+obonds[cstate]
-		except KeyError:
-			nstate=links_h[cstate]
-	elif d[cstate][0]=='O':
-		nstate=links_o[cstate]+hbonds[cstate]
+def next_state(item,d,links_h,links_o,hbonds,obonds):
+	try:
+		if d[item][0]=='H':
+			if item in obonds:
+				nstate=links_h[item]+obonds[item]
+			else:
+				nstate=links_h[item]
+		elif d[item][0]=='O':
+			if item in hbonds:
+				nstate=links_o[item]+hbonds[item]
+			else:
+				nstate=links_o[item]
+	except KeyError:
+		nstate = []
 	return nstate
+
+def printAllPaths(cstate, goal, d,links_h,links_o,hbonds,obonds, vs, path, count, fli): 
+
+    # Mark the current node as visited and store in path 
+    #print cstate, next_state(cstate, d,links_h,links_o,hbonds,obonds), path, count
+    
+    vs.add(cstate)
+    path.append(cstate) 
+    count += 1
+    # If current vertex is same as destination, then print 
+    # current path[] 
+    if cstate in goal and count >3: 
+        fli.append(copy.copy(path)) 
+    else: 
+        # If current vertex is not destination 
+        #Recur for all the vertices adjacent to this vertex 
+        for i in next_state(cstate, d,links_h,links_o,hbonds,obonds): 
+            if i not in vs: 
+                printAllPaths(i, goal, d,links_h,links_o,hbonds,obonds, vs, path, count, fli) 
+                  
+    # Remove current vertex from path[] and mark it as unvisited 
+    path.pop() 
+    vs.remove(cstate)
+
+def compute(x, d,links_h,links_o,hbonds,obonds, output):
+	vs = set()
+	path = []
+	count = 0
+	fli = []
+	goal = next_state(x, d,links_h,links_o,hbonds,obonds)
+	printAllPaths(x, goal, d,links_h,links_o,hbonds,obonds, vs, path, count, fli)
+
+	'''#print fli
+				c_li = []
+				for i in fli:
+					c = copy.copy(i)
+					c.sort()
+					c_li.append(c)
+			
+				inde = []
+				for i in range (len(c_li)):
+					for j in range (len(c_li)):
+						if i == j:
+							continue
+						if c_li[i] == c_li[j]:
+							inde.append(j)
+			
+				print inde
+				fli_f = []
+				for i in range (len(fli)):
+					if i not in inde:
+						fli_f.append(fli[i])'''
+
+	output.put((x, fli))
+
+def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
+
+	output = mp.Queue()
+
+	processes = [mp.Process(target=compute, args=(x, d,links_h,links_o,hbonds,obonds, output)) for x in range (1, len(d)) if d[x][0] == 'O']
+
+	for p in processes:
+		p.start()
+	for p in processes:
+		p.join()
+	
+	results = [output.get() for p in processes]
+	
+	return results
+
 
 def bfs(cstate,d,links_h,links_o,hbonds,obonds):    
     path=[]
@@ -177,10 +255,21 @@ def visualize(rings,links_o,links_h):
 
 if __name__=='__main__':
 	d,links_h,links_o,hbonds,obonds=data.data()
-	ring_d=ring_extract(d,links_h,links_o,hbonds,obonds)
-	print ring_d
-	#visualize(ring_d,links_o,links_h)
 
+	print compute_all_cycles(d,links_h,links_o,hbonds,obonds)
+	'''
+	vs = set()
+	path = []
+	count = 0
+	fli = []
+	goal = next_state(1, d,links_h,links_o,hbonds,obonds)
+	printAllPaths(1, goal, d,links_h,links_o,hbonds,obonds, vs, path, count, fli)
+
+	print fli
+	#ring_d=ring_extract(d,links_h,links_o,hbonds,obonds)
+	#print ring_d
+	#visualize(ring_d,links_o,links_h)
+	'''
 
 
 
