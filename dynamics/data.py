@@ -12,7 +12,7 @@ import os
 
 def PBC(lis,a,b,c):
 	x,y,z=lis
-	return [x,y,z]
+	#return [x,y,z]
 	x=check(x,0,a)
 	y=check(y,0,b)
 	z=check(z,0,c)
@@ -38,6 +38,7 @@ def angle(a,b,c,e,f,d):
 
 	angle2 = np.arccos(np.dot(v3, v5) / (np.linalg.norm(v3) * np.linalg.norm(v5)))
 	a3= min(angle2*360/6.28,(2 * np.pi - angle)*360/6.28)
+	#print a1, a2, a3
 	if a1>100 and a2+a3>110:
 		return True
 	return False
@@ -58,7 +59,7 @@ def distance(a,b):
 def get_donars(o,h,o_refe,h_refe,o_boun,h_boun,ab,bb,cb):
     point_tree = spatial.cKDTree(h)
     li_a={}
-    le=1.2
+    le=1.3
     for i in range (len(o)):
         li1=(point_tree.query_ball_point(o[i], le))
         if i in o_boun:
@@ -177,9 +178,27 @@ def near_boundry(lis,a,b,c):
 		li.append('+z')
 	elif z<-0.5*c+2:
 		li.append('-z')
+	#print li
 	return li
 
 def temp_d():
+
+	#file = open('/Users/47510753/Documents/side_projects/dynamics/pbc_corrected.com','r')
+	file = open('/Users/47510753/Documents/side_projects/dynamics/book.com','r')
+	lines=file.readlines()
+	file.close()
+	d={}
+	ref=1
+
+	for line in lines[5:]:
+		if len(line.strip().split())==0:
+			break
+		li = line.strip().split()
+		d[ref] = [li[0]]+map(float,li[1:])
+		ref+=1
+	return d 
+
+	'''
 	file = open('/Users/47510753/Downloads/test-2.pdb','r')
 	lines=file.readlines()
 	file.close()
@@ -198,48 +217,27 @@ def temp_d():
 			d[ref]=['H',x,y,z]
 			ref+=1
 	return d
-		
+	'''	
 
-def data(d=None):
-	'''
-	d={1:['O',0,0,0],
-	   2:['H',1,0,0],
-	   3:['H',0,1,0],
-	   4:['O',0,-1.8,0],
-	   5:['H',0.7,-2.5,0],
-	   6:['H',-0.7,-2.5,0],
-	   7:['O',0,3.0,0],
-	   8:['H',0,2.6,-0.7],
-	   9:['H',0,2.6,0.7],
-	   10:['O',0,-4.5,0],
-	   11:['H',0,-4.5,1],
-	   12:['H',0,-5.5,0],
-	   13:['O',2.8,0,0],
-	   14:['H',3.5,0.7,0],
-	   15:['H',3.5,-0.7,0],
-	   16:['O',-4.9,0,0],
-	   17:['H',-4.2,-0.7,0],
-	   18:['H',-4.2,0.7,0]}
-	'''
+def data(d=None, a = 31.269, b = 31.175, c = 31.073):
 
-	#d=temp_d()
+	if not d:
+		d=temp_d()
 
 	o,h,o_ref,h_ref=[],[],0,0
 	o_refe,h_refe={},{}
 	o_bou,h_bou,o_boun,h_boun=[],[],{},{}
 
 	#a,b,c=31.269,31.175,31.073
-	#a,b,c=100,100,100
-	a,b,c=349.018620,352.848620,353.568620
-	a,b,c=1000,1000,1000
-	#a,b,c=10,10,10
 
 	for i in range (1,len(d)+1):
+		
 		p=PBC(d[i][1:],a,b,c)
 		#print d[i][1:],p
 		if d[i][1:]!=p:
 			d[i]=[d[i][0]]+p 
-			print i,p
+			#print i,p
+		#print ' '.join(map(str,d[i]))
 
 		if d[i][0]=='O':
 			o.append(d[i][1:])
@@ -260,7 +258,7 @@ def data(d=None):
 	links_o=get_donars(o,h,o_refe,h_refe,o_boun,h_boun,a,b,c)
 	links_h=get_acceptors(links_o)
 
-	res=result(o,h,1.3,2.8,o_boun,h_boun,a,b,c)
+	res=result(o,h,1.5,2.5,o_boun,h_boun,a,b,c)
 	
 	hbonds={}
 	obonds={}
@@ -277,8 +275,12 @@ def data(d=None):
 
 			kli=[]
 			for j in li:
-
-				if 1 or angle(o_refe[i[0]],h_refe[j],links_h[h_refe[j]][0],h1,h2,d):
+				#print o_refe[i[0]],h_refe[j]
+				try:
+					ang = angle(o_refe[i[0]],h_refe[j],links_h[h_refe[j]][0],h1,h2,d)
+				except KeyError:
+					ang = 1
+				if ang:
 					kli.append(h_refe[j])
 					obonds[h_refe[j]]=[o_refe[i[0]]]
 			hbonds[o_refe[i[0]]]=kli
@@ -302,8 +304,13 @@ def data(d=None):
 
 
 if __name__=='__main__':
-	data()
-
+	d={1:['H',0,0,0],
+	   2:['O',-0.2,0,0],
+	   3:['H',-0.2,-1,0],
+	   4:['O',1.4,0,0],
+	   5:['H',1.4,-1,0],
+	   6:['H',2,0,0]}
+	d,links_h,links_o,hbonds,obonds = data(d)
 
 
 
