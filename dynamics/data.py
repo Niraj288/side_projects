@@ -184,7 +184,10 @@ def near_boundry(lis,a,b,c):
 def temp_d():
 
 	#file = open('/Users/47510753/Documents/side_projects/dynamics/pbc_corrected.com','r')
-	file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
+	if len(sys.argv) > 1:
+		file = open(sys.argv[1], 'r')
+	else:
+		file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
 	lines=file.readlines()
 	file.close()
 	d={}
