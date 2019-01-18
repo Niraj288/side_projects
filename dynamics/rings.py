@@ -82,6 +82,16 @@ def compute(x, d,links_h,links_o,hbonds,obonds, output):
 	goal = next_state(x, d,links_h,links_o,hbonds,obonds)
 	printAllPaths(x, goal, d,links_h,links_o,hbonds,obonds, vs, path, count, fli)
 
+	flis_f = []
+	fcheck = []
+	for i in fli:
+		temp = copy.copy(i)
+		temp.sort()
+		if temp not in fcheck:
+			flis_f.append(i)
+			fcheck.append(temp)
+
+
 	'''#print fli
 				c_li = []
 				for i in fli:
@@ -103,7 +113,60 @@ def compute(x, d,links_h,links_o,hbonds,obonds, output):
 					if i not in inde:
 						fli_f.append(fli[i])'''
 
-	output.put((x, fli))
+	output.put((x, flis_f))
+
+def get_max_cycles_only(f):
+	#print f
+	ring_size = {}
+	vs = set()
+	for i in f:
+		#print i
+		ma = []
+		for j in f[i]:
+			for k in j:
+				if k in vs:
+					continue
+				if k in f:
+					#print k, len(f[k])
+					ma.append([len(f[k]),f[k]])
+		if len(ma) == 0:
+			continue
+		
+		ma.sort(reverse = True)
+		#print ma[0], 'ma'
+		l = [ma[0]]
+		count = 1
+		while count < len(ma) and len(ma)>1:
+			if ma[count][0] == ma[count-1][0]:
+				a,b = copy.copy(ma[count][1]), copy.copy(ma[count-1][1])
+				a = sorted(a, key=lambda x: len(x), reverse=True)
+				b = sorted(b, key=lambda x: len(x), reverse=True)
+				
+				c, d = copy.copy(a[0]), copy.copy(b[0])
+				c.sort()
+				d.sort()
+
+				if c == d:
+					pass
+				else:
+					print c, d
+					l.append(ma[count])
+			else:
+				break
+			count+=1
+		if l[0][0] not in ring_size:
+			ring_size[l[0][0]] = [l]
+		else:
+			ring_size[l[0][0]].append(l)
+		for j in f[i]:
+			for k in j:
+				vs.add(k)
+		#print l, 'l'
+	return ring_size
+
+
+
+
 
 def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
 
@@ -117,8 +180,59 @@ def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
 		p.join()
 	
 	results = [output.get() for p in processes]
+	#print results
+	res_dict = {}
+	for i in results:
+		res_dict[i[0]] = i[1]
+
+	#print res_dict
+	pr = get_max_cycles_only(res_dict)
+	#print pr
+
+	return pr
+
+def write_o(pr, d, links_h,links_o,hbonds,obonds, w = None):
+	'''
+	cli = [] 
+	fli = {}
+	for i in results:
+		a,b = i 
+		for j in b:
+			ck = copy.copy(j)
+			ck.sort()
+			if ck not in cli:
+				cli.append(ck)
+
+				if len(ck) in fli:
+					fli[len(ck)].append(j)
+				else:
+					fli[len(ck)] = [j]
+	'''
 	
-	return results
+	if w:
+		count = 0
+		for i in pr:
+			#print pr[i][0][0][1]
+			ij = [len(ijk) for ijk in pr[i][0][0][1]]
+			ij.sort(reverse = True)
+			if ij[0] in w:
+				for j in pr[i]:
+					for k in j:
+						li = []
+						f = open('ring'+str(ij[0])+'-'+str(count)+'.com', 'w')
+						f.write("""hf
+
+comment
+
+0 1 
+""")
+						count+=1
+						for l in k[1]:
+							for m in l:
+								if m not in li:
+									li.append(m)
+									f.write(' '.join(map(str,d[m]))+'\n')
+						f.close()
 
 
 def bfs(cstate,d,links_h,links_o,hbonds,obonds):    
@@ -256,7 +370,8 @@ def visualize(rings,links_o,links_h):
 if __name__=='__main__':
 	d,links_h,links_o,hbonds,obonds=data.data()
 
-	print compute_all_cycles(d,links_h,links_o,hbonds,obonds)
+	pr = compute_all_cycles(d,links_h,links_o,hbonds,obonds)
+	write_o(pr, d, links_h,links_o,hbonds,obonds, range(15))
 	'''
 	vs = set()
 	path = []

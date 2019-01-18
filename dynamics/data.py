@@ -184,7 +184,7 @@ def near_boundry(lis,a,b,c):
 def temp_d():
 
 	#file = open('/Users/47510753/Documents/side_projects/dynamics/pbc_corrected.com','r')
-	file = open('/Users/47510753/Documents/side_projects/dynamics/book.com','r')
+	file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
 	lines=file.readlines()
 	file.close()
 	d={}
@@ -258,7 +258,7 @@ def data(d=None, a = 31.269, b = 31.175, c = 31.073):
 	links_o=get_donars(o,h,o_refe,h_refe,o_boun,h_boun,a,b,c)
 	links_h=get_acceptors(links_o)
 
-	res=result(o,h,1.5,2.5,o_boun,h_boun,a,b,c)
+	res=result(o,h,1.5,2.4,o_boun,h_boun,a,b,c)
 	
 	hbonds={}
 	obonds={}
