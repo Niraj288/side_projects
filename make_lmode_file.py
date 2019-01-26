@@ -16,19 +16,22 @@ def get_ids(path,suffix):
 		if ref==2 or ref==3:
 			ref+=1
 		if ref==4:
+			#if suffix=='_dh':
+			s,e=line.index('('),line.index(')')
+                        n1=line.strip().split()[line.strip().split().index('(')-1]
+                        l=line[s+1:e].split(',')
+                        k = line.strip().split()[2]
+                        if ']' in k:
+                            k = line[44:51].strip()
+                        a, h, d = [l[0].strip(),l[1].strip(),k]
+			#print a, h, d
+			l=line.strip().split()
 			if suffix=='_dh':
 				
-				if '[' in line:
-					l=line.strip().split()
-					st+=l[6]+' '+l[8]+' 0 0 : '+l[-3]+'\n'
-				else:
-					l=line.strip().split()
-					st+=l[2]+' '+l[4]+' 0 0 : '+l[-3]+'\n'
+                                st+=h+' '+d+' 0 0 : '+l[-3]+'\n'
 			else:
-				#for acceptor-hydrogen calculation
-				s,e=line.index('('),line.index(')')
-				l=line[s+1:e].split(',')
-				st+=l[0].strip()+' '+l[1].strip()+' 0 0 : '+line[e+1:].split()[0]+'\n'
+				st+=h+' '+a+' 0 0 : '+l[-3]+'\n'
+				 
 			
 	return st
 
@@ -61,7 +64,7 @@ $LocMod $End
 
 	#/Users/47510753/Downloads/LocalMode-2016/lmodes.exe
 
-	os.system("/Users/47510753/Downloads/LocalMode-2016/lmodes.exe -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
+	os.system("lmode -b "+'< '+filename+suffix+'.alm' +' >'+' '+filename+suffix+'.out')
 
 '''
 lis=os.listdir('.')
