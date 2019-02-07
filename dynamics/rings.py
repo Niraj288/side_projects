@@ -4,6 +4,7 @@ import copy
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import style
 import multiprocessing as mp
+import numpy as np
 style.use("ggplot")
 
 class Stack:
@@ -165,14 +166,48 @@ def get_max_cycles_only(f):
 	return ring_size
 
 
-
+def make_block(a,b,c,d,incr):
+	coord = np.array([[i]+d[i][1:] for i in d])
+	print np.min(coord)
+	block = []
+	for i in range (-a,a,incr):
+		for j in range (-b,b,incr):
+			for k in range (-c,c,incr):
+				ct = coord[coord[:,1]>i]
+				ct = ct[ct[:,1]<i+incr]
+				#print ct
+				ct = ct[ct[:,2]>j]
+				ct = ct[ct[:,2]<j+incr]
+				ct = ct[ct[:,3]>k]
+				ct = ct[ct[:,3]<k+incr]
+				#print ct
+				ld = {}
+				for ij in ct:
+					ld[int(ij[0])] = d[int(ij[0])]
+				block.append(ld)
+	for i in range (-a+incr/2,a,incr):
+		for j in range (-b+incr/2,b,incr):
+			for k in range (-c+incr/2,c,incr):
+				ct = coord[coord[:,1]>i]
+				ct = ct[ct[:,1]<i+incr]
+				#print ct
+				ct = ct[ct[:,2]>j]
+				ct = ct[ct[:,2]<j+incr]
+				ct = ct[ct[:,3]>k]
+				ct = ct[ct[:,3]<k+incr]
+				#print ct
+				ld = {}
+				for ij in ct:
+					ld[int(ij[0])] = d[int(ij[0])]
+				block.append(ld)
+	return block
 
 
 def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
 
 	output = mp.Queue()
 
-	processes = [mp.Process(target=compute, args=(x, d,links_h,links_o,hbonds,obonds, output)) for x in range (1, len(d)) if d[x][0] == 'O']
+	processes = [mp.Process(target=compute, args=(x, d,links_h,links_o,hbonds,obonds, output)) for x in d if d[x][0] == 'O']
 
 	for p in processes:
 		p.start()
@@ -369,9 +404,12 @@ def visualize(rings,links_o,links_h):
 
 if __name__=='__main__':
 	d,links_h,links_o,hbonds,obonds=data.data()
-
-	pr = compute_all_cycles(d,links_h,links_o,hbonds,obonds)
-	write_o(pr, d, links_h,links_o,hbonds,obonds, range(15))
+	block = make_block(15,15,15,d,6)
+	print len(block[0])
+	for i in block:
+		print len(i)
+		pr = compute_all_cycles(i,links_h,links_o,hbonds,obonds)
+		write_o(pr, d, links_h,links_o,hbonds,obonds, range(15))
 	'''
 	vs = set()
 	path = []
