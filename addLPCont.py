@@ -25,8 +25,11 @@ def get_ids(path,suffix='_ah'):
                         s,e=line.index('('),line.index(')')
                         n1=line.strip().split()[line.strip().split().index('(')-1]
                         l=line[s+1:e].split(',')
-                        st=[l[0].strip(),l[1].strip(),line.strip().split()[2]]
-		
+                        k = line.strip().split()[2]
+                        if ']' in k:
+                            k = line[44:51].strip()
+                        st=[l[0].strip(),l[1].strip(),k]
+                        #print st
                         if i2==0:
                                 length=len(line)
                         lm[str(i2+1)+'.']=st
@@ -105,6 +108,7 @@ def job(path):
                 if ref==1 and 'LP'==lis[1] and 'BD*' in line:
                         #print line,line[16:20].strip(),line[44:47].strip(),line[50:53].strip()
                         for h,i,j,k in d:
+                                #print h,i,j,k
                                 li=map(int,[i,j,k])
                                 li.sort()
                                 t_li=map(int,[line[16:20].strip(),line[44:47].strip(),line[50:53].strip()])

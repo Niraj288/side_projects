@@ -25,7 +25,7 @@ def rms(a,b):
 	return rmsd(mobile.select_atoms('name CA').positions, ref.select_atoms('name CA').positions, superposition=True)
 
 if __name__=='__main__':
-	print rms(sys.argv[1],sys.argv[2])
+	print alin(sys.argv[1],sys.argv[2])
 
 
 

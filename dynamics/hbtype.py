@@ -96,9 +96,9 @@ def result(d,links_h,links_o,hbonds,obonds):
 
 	res = {}
 	for i in range (4):
-		for j in range (2):
-			for k in range (3):
-				for l in range (3):
+		for j in range (4):
+			for k in range (4):
+				for l in range (4):
 					st = str(i)+str(j)+'-'+str(k)+str(l)
 					res[st] = []
 
@@ -117,6 +117,7 @@ def result(d,links_h,links_o,hbonds,obonds):
 	if warns:
 		print 'Number of warnings:',warns
 	return res 
+
 
 def visual(d,links_h,links_o,hbonds,obonds):
 

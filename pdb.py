@@ -4,8 +4,37 @@ import time
 import math
 from math import log10, floor
 from scipy import interpolate
+import multiprocessing as mp
 import os
 import sys
+
+def dihedral(lis):
+    """formula from Wikipedia article on "Dihedral angle"; formula was removed
+    from the most recent version of article (no idea why, the article is a
+    mess at the moment) but the formula can be found in at this permalink to
+    an old version of the article:
+    https://en.wikipedia.org/w/index.php?title=Dihedral_angle&oldid=689165217#Angle_between_three_vectors
+    uses 1 sqrt, 3 cross products"""
+    p=np.array(lis)
+
+    p0 = p[0]
+    p1 = p[1]
+    p2 = p[2]
+    p3 = p[3]
+
+    b0 = -1.0*(p1 - p0)
+    b1 = p2 - p1
+    b2 = p3 - p2
+
+    b0xb1 = np.cross(b0, b1)
+    b1xb2 = np.cross(b2, b1)
+    
+    b0xb1_x_b1xb2 = np.cross(b0xb1, b1xb2)
+    
+
+    y = np.dot(b0xb1_x_b1xb2, b1)*(1.0/np.linalg.norm(b1))
+    x = np.dot(b0xb1, b1xb2)
+    return round_sig(np.degrees(np.arctan2(y, x)))
 
 def get_donars(arr_h,refe1,arr):
     point_tree = spatial.cKDTree(arr)
@@ -132,11 +161,11 @@ def check_cartoon(point, li0, d):
         return None
     res2 = cartoon(point, li0, d, 5)
 
-    #print res1, res2
+    #print point, res1, res2
 
-    if res1 < 1.18 and res2 < 1.2:
+    if res1 < 1.4 and res2 < 1.3:
         return 'Beta'
-    elif res1 < 1.18 and res2 > 1.2:
+    elif res1 < 1.4 and res2 > 1.3:
         return 'Coil' 
     elif res1 < 2.0 and res2 < 2.5:
         return 'Alpha'
@@ -182,20 +211,23 @@ def data_extraction(path1,path2):
     d['file_xyz']=path2.split('/')[-1]
     d['file_pdb']=path1.split('/')[-1]
     n_heavy_pdb,n_light_pdb=0,0
+    count = 1
     for line in list1:
-        if "END" in line.split()[0]:
+        if "ENDMDL" in line.split()[0]:
             break
-        if line.split()[0] in ['ATOM']:
+        if line.split()[0] in ['ATOM', 'HETATM']:
             #print line
             id,at,rt,_,_0,x,y,z=line.strip().split()[1:9]
             s=line.strip().split()[-1]
-            d[int(id)]=[at,rt,s,chain(s,at),_0, x, y, z]
+            d[count]=[at,rt,s,chain(s,at),_0, x, y, z]
+            count+=1
             l+=1
             if s=='H':
                 n_light_pdb+=1
             else:
                 n_heavy_pdb+=1
 
+    #print n_heavy_pdb+n_light_pdb
     li0 = get_backbone(d)
     d = check_alpha(d, li0)
 
@@ -234,8 +266,16 @@ def data_extraction(path1,path2):
         ref_all+=1
     
     donars=get_donars(arr_h,refe1,arr)
-
+    #print n_heavy_pdb+n_light_pdb
     return d,donars,arr_a,arr_h,refe_a,refe_h,n_heavy_pdb,n_light_pdb,r1,r2,refe_d,coord
+
+def compute(point_tree, point, i, ma, mi, out):
+    li1=(point_tree.query_ball_point(point, ma))
+    li2=(point_tree.query_ball_point(point, mi))
+
+    li = [i,list(set(li1)-set(li2))]
+    out.put(li)
+
 
 #return [index from array donars,[index for hydrogens,...]]
 def result(arr1,arr2,mi,ma):
@@ -245,11 +285,28 @@ def result(arr1,arr2,mi,ma):
     point_tree = spatial.cKDTree(points)
     li1,li2=[],[]
     res=[]
+    '''
+    out = mp.Queue()
+
+    processes = [mp.Process(target=compute, args=(point_tree, arr1[i], i, ma, mi, out)) for i in range (len(arr1))]
+
+    for p in processes:
+        p.start()
+    for p in processes:
+        p.join()
+    
+    res = [out.get() for p in processes]
+    '''
+    #print results
+
     for i in range (len(arr1)):
         #print i
         li1=(point_tree.query_ball_point(arr1[i], ma))
         li2=(point_tree.query_ball_point(arr1[i], mi))
         res.append([i,list(set(li1)-set(li2))])
+
+    #print res
+    
     return res
 
 #returns [donar id,[(hydrogen id,acceptor id),....]]
@@ -397,6 +454,11 @@ def job(path1,path2):
     data=data_extraction(path1,path2)
     out=output(data)
     return write_o(path1,out,data[0])
+
+if __name__ == '__main__':
+    t = time.time()
+    job(sys.argv[1], sys.argv[2])
+    print 'Time taken is', time.time()-t,'seconds'
 
 
 

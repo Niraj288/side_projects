@@ -15,6 +15,8 @@ import addLPCont
 import addCharges
 import addRing
 import addAngle
+import addCR
+import addBifr
 import xlwt
 
 def make_excel(d,filename):
@@ -102,6 +104,22 @@ def make_excel(d,filename):
     		sheet.write(0,ref,'Intra-HB')
     		for j in d[i]:
     			sheet.write(int(j[:-1]),ref,d[i][j])
+
+    	if i=='B':
+    		ref+=1
+    		sheet.write(0,ref,'Bifurcation type')
+    		for j in d[i]:
+    			sheet.write(int(j[:-1]),ref,d[i][j])
+
+    	if i == 'CR':
+    		ref+=1
+    		sheet.write(0,ref,'ra')
+    		sheet.write(0,ref+1,'rd')
+    		for j in d[i]:
+    			a,b=map(float,d[i][j].strip().split())
+    			sheet.write(int(j[:-1]),ref,a)
+    			sheet.write(int(j[:-1]),ref+1,b)
+    		ref+=1
 	
 	if i=='lp':
                 ref+=1
@@ -238,6 +256,16 @@ def job(path):
 		R=addRing.job(filename+'.txt')
 		lis_excel['R']=R
 
+	if '-CR' in sys.argv:
+		print 'Performing curvature ratio analysis ...'
+		CR=addCR.job(filename+'.txt')
+		lis_excel['CR']=CR
+
+	if '-B' in sys.argv:
+		print 'Adding bifurcation type ...'
+		B=addBifr.job(filename+'.txt')
+		lis_excel['B']=B
+
 	make_excel(lis_excel,filename)
 
 	print 'Done!!'
@@ -253,6 +281,8 @@ if __name__ == "__main__":
 		print '-LP for lone pair contribution from nbo calculations in .g09.out file'
 		print '-R to do Intramolecular analysis'
 		print '-a to add HB angle'
+		print '-CR to add curvature ratio'
+		print '-B to add bifurcation type'
 		
 	else:
 		job(sys.argv[1])

@@ -27,7 +27,7 @@ def get_ids(path,suffix='_ah'):
                 if len(line.strip().split())==0 and ref>0:
                         ref+=1
                 if ref==2:
-                        lines[i-1]=' '.join(lines[i-1].strip().split())+', IntramolecularRing(size)(dihedral for C5 type) \n'
+                        lines[i-1]=' '.join(lines[i-1].strip().split())+', IntramolecularRing(size) \n'
                 if ref==2 or ref==3:
                         ref+=1
                 if ref==4:
@@ -58,7 +58,7 @@ def addRing(path,p_id):
                 if len(line.strip().split())==0 and ref>0:
                         ref+=1
                 if ref==2:
-                        lines[i-1]=' '.join(lines[i-1].strip().split())+', IntramolecularRing(size)(dihedral for C5 type) \n'
+                        lines[i-1]=' '.join(lines[i-1].strip().split())+', IntramolecularRing(size) \n'
                 if ref==2 or ref==3:
                         ref+=1
                 if ref==4:
@@ -93,7 +93,8 @@ def job(path):
             refe_lis=con.bfs(int(a)-1,int(c)-1)
             if len(refe_lis)==0:
                 p_id[i]='None'
-            elif len(refe_lis)==4:
+            elif 0 and len(refe_lis)==4:
+                # for writing dihedral in bracket for 5 memberd rings
                 p_id[i]='I('+str(len(refe_lis)+1)+')'+'('+str(con.dihedral(refe_lis))+')'
             else:
                 p_id[i]='I('+str(len(refe_lis)+1)+')'
