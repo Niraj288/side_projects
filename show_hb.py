@@ -55,6 +55,7 @@ def selection_(path):
 			sel.append(j.strip())
 			cmd.select(j.strip(),'id '+j.strip())
 		cmd.distance(t,i.strip(),j.strip())
+		#cmd.hide('labels', t)
 	col=['red','green','blue','yellow','cyan','white','orange','grey']
 	typs=list(typs)
 	print typs
@@ -67,7 +68,7 @@ def selection_(path):
 		cmd.delete(i)
 		
 
-selection_('/Users/47510753/Downloads/6gn4.txt')
+selection_('/Users/47510753/Desktop/To-Niraj/Final/script_outputs/1k43-qm3.txt')
 if __name__=='__main__':
 	selection_('/Users/47510753/Desktop/To-Niraj/test2/1r4g-qm5.txt')
 	#selection_(sys.argv[1])

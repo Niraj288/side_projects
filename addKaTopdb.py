@@ -84,7 +84,8 @@ for i in os.listdir('.'):
 print 'Done!!'
 '''
 
-#addKa(sys.argv[1])
+if __name__ == '__main__':
+	addKa(sys.argv[1], '_ah')
 
 
 

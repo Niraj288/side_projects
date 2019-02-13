@@ -10,9 +10,11 @@ import save_crd_amber as amb
 import sys
 import os
 
+sys.setrecursionlimit(1500)
+
 def PBC(lis,a,b,c):
 	x,y,z=lis
-	#return [x,y,z]
+	return [x,y,z]
 	x=check(x,0,a)
 	y=check(y,0,b)
 	z=check(z,0,c)
@@ -187,7 +189,8 @@ def temp_d():
 	if len(sys.argv) > 1:
 		file = open(sys.argv[1], 'r')
 	else:
-		file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
+		#file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
+		file = open('/Users/47510753/Documents/water/test.com', 'r')
 	lines=file.readlines()
 	file.close()
 	d={}
