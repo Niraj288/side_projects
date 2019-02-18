@@ -50,8 +50,11 @@ def get_coord(file,topo,frame=None):
 	t=md.load(file,top=topo)
 	refe=0
 	alld={}
+	pbc = {}
 	for frame in range (0,len(t.xyz),100):
 		lis=t.xyz[frame]
+
+		pbc[frame] = t.unitcell_lengths[frame]
 
 		d={}
 		
@@ -69,14 +72,14 @@ def get_coord(file,topo,frame=None):
 		alld[refe]=d
 		#print d 
 		refe+=1 
-	return alld
+	return alld, pbc 
 
 if __name__=='__main__':
 	a=sys.argv[1]
 	b=sys.argv[2]
 	frame=1000
 
-	dic=get_coord_tip5p(a,b)
+	dic, pbc=get_coord(a,b)
 
 	print len(dic)
 

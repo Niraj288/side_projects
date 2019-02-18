@@ -51,6 +51,16 @@ def write_o(graph,d):
 		st+= "{:>6}  {:>10}".format(*[str(i),str(len(mers[i]))])+'\n'
 	return mers, st 
 
+def mer_dict(d,links_h,links_o,hbonds,obonds):
+	graph=connectivity(d,links_h,links_o,hbonds,obonds)
+	mers, st = write_o(graph,d)
+	print st 
+	dic = {}
+	for i in st.split('\n')[2:-1]:
+		a,b = i.strip().split()
+		dic[int(a)] = int(b)
+	return dic
+
 if __name__=='__main__':
 	
 	d,links_h,links_o,hbonds,obonds=data.data(None, 100, 100, 100)
@@ -59,4 +69,9 @@ if __name__=='__main__':
 	graph=connectivity(d,links_h,links_o,hbonds,obonds)
 	#print links_o
 	mers, st = write_o(graph,d)
-	print st
+
+	dic = {}
+	for i in st.split('\n')[2:-1]:
+		a,b = i.strip().split()
+		dic[int(a)] = int(b)
+	print dic

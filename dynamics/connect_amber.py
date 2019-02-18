@@ -7,26 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 import pandas as pd
 import os
-
-def visual(res, file):
-	lis = []
-	for i in res:
-		lis.append([res[i], i])
-
-	lis.sort(reverse = True)
-
-	x_labels = [i[1] for i in lis if i[0]!= 0]
-	frequencies = [i[0] for i in lis if i[0]!=0]
-
-	#print lis
-
-	plt.figure(figsize=(12, 8))
-	freq_series = pd.Series.from_array(frequencies)
-	ax = freq_series.plot(kind='bar')
-	ax.set_ylabel('Frequency')
-	ax.set_xticklabels(x_labels)
-
-	plt.savefig(file+'.png')
+import connections
 
 def run_each_frame(file, topo):
 	alld, pbc = sca.get_coord(file, topo)
@@ -38,10 +19,11 @@ def run_each_frame(file, topo):
 	for frame in alld:
 		a,b,c = pbc[frame]
 		d,links_h,links_o,hbonds,obonds=data.data(alld[frame], a, b, c)
-		temp_d = hbtype.result(d,links_h,links_o,hbonds,obonds)
+		
+		temp_d = connections.mer_dict(d,links_h,links_o,hbonds,obonds)
 
 		for i in temp_d:
-			temp_d[i] = len(temp_d[i])
+			temp_d[i] = temp_d[i]
 			if i not in avg_dict:
 				avg_dict[i] = temp_d[i]
 			else:
@@ -54,10 +36,8 @@ def run_each_frame(file, topo):
 	for i in avg_dict:
 		avg_dict[i] = avg_dict[i]/count
 
-	visual(avg_dict, file[:-6])
-
-	np.save(file[:-6]+'_HB_perFrame.npy', res_d)
-	np.save(file[:-6]+'_HB_avg.npy', avg_dict)
+	np.save(file[:-6]+'_MER_perFrame.npy', res_d)
+	np.save(file[:-6]+'_MER_avg.npy', avg_dict)
 
 def test():
 	for i in os.listdir('.'):
@@ -69,20 +49,6 @@ def test():
 
 if __name__ == '__main__':
 	#run_each_frame(sys.argv[1], sys.argv[2])
-	#test()
-
-	f = sys.argv[1].split('.')[0]
-	d = np.load(sys.argv[1]).item()
-	visual(d,f)
-
-
-
-
-
-
-
-
-
-
+	test()
 
 
