@@ -14,7 +14,6 @@ sys.setrecursionlimit(1500)
 
 def PBC(lis,a,b,c):
 	x,y,z=lis
-	return [x,y,z]
 	x=check(x,0,a)
 	y=check(y,0,b)
 	z=check(z,0,c)
@@ -184,13 +183,13 @@ def near_boundry(lis,a,b,c):
 	return li
 
 def temp_d():
-
+	
 	#file = open('/Users/47510753/Documents/side_projects/dynamics/pbc_corrected.com','r')
 	if len(sys.argv) > 1:
 		file = open(sys.argv[1], 'r')
 	else:
-		#file = open('/Users/47510753/Documents/side_projects/dynamics/cage.com','r')
-		file = open('/Users/47510753/Documents/water/test.com', 'r')
+		file = open('/Users/47510753/Documents/side_projects/dynamics/temp.com','r')
+		#file = open('/Users/47510753/Documents/water/test.com', 'r')
 	lines=file.readlines()
 	file.close()
 	d={}
@@ -223,9 +222,9 @@ def temp_d():
 			d[ref]=['H',x,y,z]
 			ref+=1
 	return d
-	'''	
+	'''
 
-def data(d=None, a = 31.269, b = 31.175, c = 31.073):
+def data(d=None, a = 35.1403200, b = 35.0343200, c = 34.9203200): # pbc box = 35.1403200  35.0343200  34.9203200
 
 	if not d:
 		d=temp_d()

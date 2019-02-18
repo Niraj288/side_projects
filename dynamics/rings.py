@@ -121,7 +121,7 @@ def get_max_cycles_only(f):
 	ring_size = {}
 	vs = set()
 	for i in f:
-		#print i
+
 		ma = []
 		for j in f[i]:
 			for k in j:
@@ -130,19 +130,22 @@ def get_max_cycles_only(f):
 				if k in f:
 					#print k, len(f[k])
 					ma.append([len(f[k]),f[k]])
+		
 		if len(ma) == 0:
 			continue
 		
 		ma.sort(reverse = True)
 		#print ma[0], 'ma'
 		l = [ma[0]]
+
 		count = 1
 		while count < len(ma) and len(ma)>1:
 			if ma[count][0] == ma[count-1][0]:
 				a,b = copy.copy(ma[count][1]), copy.copy(ma[count-1][1])
 				a = sorted(a, key=lambda x: len(x), reverse=True)
 				b = sorted(b, key=lambda x: len(x), reverse=True)
-				
+				if len(a) < 1 or len(b) < 1:
+					break
 				c, d = copy.copy(a[0]), copy.copy(b[0])
 				c.sort()
 				d.sort()
@@ -150,7 +153,7 @@ def get_max_cycles_only(f):
 				if c == d:
 					pass
 				else:
-					print c, d
+					#print c, d
 					l.append(ma[count])
 			else:
 				break
@@ -162,13 +165,14 @@ def get_max_cycles_only(f):
 		for j in f[i]:
 			for k in j:
 				vs.add(k)
-		#print l, 'l'
+		#print vs
+		#print l
 	return ring_size
 
 
 def make_block(a,b,c,d,incr):
 	coord = np.array([[i]+d[i][1:] for i in d])
-	print np.min(coord)
+	#print np.min(coord)
 	block = []
 	for i in range (-a,a,incr):
 		for j in range (-b,b,incr):
@@ -220,11 +224,8 @@ def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
 	for i in results:
 		res_dict[i[0]] = i[1]
 
-	#print res_dict
-	pr = get_max_cycles_only(res_dict)
-	#print pr
-
-	return pr
+	return res_dict
+	
 
 def write_o(pr, d, links_h,links_o,hbonds,obonds, w = None):
 	'''
@@ -401,17 +402,75 @@ def visualize(rings,links_o,links_h):
 				ax.plot(X,Y,Z,marker='o')
 				plt.show()
 
+def merge_two_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
+
+
+def job(d,links_h,links_o,hbonds,obonds,a=100,b=100,c=100):
+	block = make_block(int(a)+1, int(b/2)+1, int(c/2)+1, d, 8)
+	#print len(block[0])
+	res_dict = {}
+	for i in block:
+		#print len(i)
+		res_dict = merge_two_dicts(compute_all_cycles(i,links_h,links_o,hbonds,obonds),res_dict)
+	
+		
+	pr = get_max_cycles_only(res_dict)
+
+	f_d = {}
+
+	check_lis = []
+
+	#print pr
+
+	for i in pr:
+		for j in pr[i]:
+			for k in j:
+				l = map(len,k[1])
+				l.sort(reverse=True)
+				ring_type = '-'.join(map(str,l))
+				if k[0] < 4:
+					continue
+				ch = list(set(np.concatenate(np.array(k[1])).ravel()))
+				ch.sort()
+				chk = copy.copy(ch)
+				if chk in check_lis:
+					continue
+				if ring_type in f_d:
+					if chk not in check_lis:
+						f_d[ring_type]+=1
+				else:
+					f_d[ring_type] = 1
+
+				check_lis.append(chk)
+
+	return f_d
+
 
 if __name__=='__main__':
+
 	d,links_h,links_o,hbonds,obonds=data.data()
-	block = make_block(15,15,15,d,6)
-	print len(block[0])
-	for i in block:
-		print len(i)
-		pr = compute_all_cycles(i,links_h,links_o,hbonds,obonds)
-		write_o(pr, d, links_h,links_o,hbonds,obonds, range(15))
+
+	print job(d,links_h,links_o,hbonds,obonds)
 
 	'''
+
+	block = make_block(int(35.1403200/2)+1, int(35.0343200/2)+1, int(34.9203200/2)+1, d, 6)
+	#print len(block[0])
+	res_dict = {}
+	for i in block:
+		#print len(i)
+		res_dict = merge_two_dicts(compute_all_cycles(i,links_h,links_o,hbonds,obonds),res_dict)
+	
+	#print res_dict	
+	pr = get_max_cycles_only(res_dict)
+
+	#print pr[3][0][0]
+	write_o(pr, d, links_h,links_o,hbonds,obonds, range(15))
+
+	
 	vs = set()
 	path = []
 	count = 0
