@@ -9,31 +9,35 @@ def distance(a,b):
 		res+=(a[i]-b[i])**2
 	return math.sqrt(res)
 
-def get_coord_tip5p(file,topo,frames=None):
+def get_coord_tip4p(file,topo,frames=None):
+	#print 'smthing'
 	t=md.load(file,top=topo)
 	refe=0
 	alld={}
-
+	pbc = {}
+	pb = list(t.unitcell_lengths)
 	for frame in range (0,len(t.xyz),100):
 		lis=t.xyz[frame]
-		oxy = lis[range(1,5000,5)]
-		h1 = lis[range(4,5000,5)]
-		h2 = lis[range(5,5000,5)]
 
-		#print oxy.shape, h1.shape, h2.shape
-		d = {}
-		for i in range (1000):
-			d[i+1] = ['O']+map(lambda x: x*10, list(oxy[i]))
+		d={}
+		
+		ref=1
+		
+		for i in range (0,len(lis),4):
+			for j in range (4):
+				if j==0:
+					d[ref]=['O']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				elif j==1 or j==2:
+					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				#print list(lis[i+j])
+				
+		alld[refe]=d
+		pbc[refe] = map(lambda x : x*10, pb[frame])
 
-		for i in range (1000):
-			d[i+1001] = ['H']+map(lambda x: x*10, list(h1[i]))
-
-		for i in range (1000):
-			d[i+2001] = ['H']+map(lambda x: x*10, list(h2[i]))
-
-		alld[frame] = d 
-
-	return alld
+		refe+=1 
+	return alld, pbc
 
 def save_data(file,topo):
 	name = file.strip().split('.')[0]
@@ -45,16 +49,15 @@ def save_data(file,topo):
 
 
 
-def get_coord(file,topo,frame=None):
+def get_coord_tip5p(file,topo,frame=None): # tip5p
 	#print 'smthing'
 	t=md.load(file,top=topo)
 	refe=0
 	alld={}
 	pbc = {}
+	pb = list(t.unitcell_lengths)
 	for frame in range (0,len(t.xyz),100):
 		lis=t.xyz[frame]
-
-		pbc[frame] = t.unitcell_lengths[frame]
 
 		d={}
 		
@@ -70,18 +73,21 @@ def get_coord(file,topo,frame=None):
 				#print list(lis[i+j])
 
 		alld[refe]=d
-		#print d 
+		pbc[refe] = map(lambda x : x*10, pb[frame])
+
 		refe+=1 
-	return alld, pbc 
+	return alld, pbc
+
+def get_coord(file, topo, frame = None):
+	return get_coord_tip4p(file, topo, frame)
 
 if __name__=='__main__':
 	a=sys.argv[1]
 	b=sys.argv[2]
 	frame=1000
 
-	dic, pbc=get_coord(a,b)
+	dic, pbc =get_coord(a,b)
 
-	print len(dic)
 
 
 
