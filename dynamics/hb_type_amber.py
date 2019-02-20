@@ -54,7 +54,7 @@ def run_each_frame(file, topo):
 	for i in avg_dict:
 		avg_dict[i] = avg_dict[i]/count
 
-	visual(avg_dict, file[:-6])
+	#visual(avg_dict, file[:-6])
 
 	np.save(file[:-6]+'_HB_perFrame.npy', res_d)
 	np.save(file[:-6]+'_HB_avg.npy', avg_dict)
@@ -69,11 +69,11 @@ def test():
 
 if __name__ == '__main__':
 	#run_each_frame(sys.argv[1], sys.argv[2])
-	#test()
+	test()
 
-	f = sys.argv[1].split('.')[0]
-	d = np.load(sys.argv[1]).item()
-	visual(d,f)
+	#f = sys.argv[1].split('.')[0]
+	#d = np.load(sys.argv[1]).item()
+	#visual(d,f)
 
 
 
