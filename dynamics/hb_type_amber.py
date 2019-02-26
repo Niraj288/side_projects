@@ -14,9 +14,12 @@ def visual(res, file):
 		lis.append([res[i], i])
 
 	lis.sort(reverse = True)
+	#lis.sort()
 
 	x_labels = [i[1] for i in lis if i[0]!= 0]
 	frequencies = [i[0] for i in lis if i[0]!=0]
+
+	print file, x_labels[0], frequencies[0]
 
 	#print lis
 
@@ -59,6 +62,52 @@ def run_each_frame(file, topo):
 	np.save(file[:-6]+'_HB_perFrame.npy', res_d)
 	np.save(file[:-6]+'_HB_avg.npy', avg_dict)
 
+def write_o():
+	fd = {}
+	st_file = 'Type '
+	st = []
+	count = 0
+	f_d = {}
+	labels = set()
+	for i in os.listdir('.'):
+		if i[-11:] =='MER_avg.npy':
+
+			
+
+			#print i
+			d = np.load(i).item()
+			filename = i[:-12]
+			filename = filename.replace('-','_')
+
+			if filename not in fd:
+				fd[filename] = count
+				count+=1
+
+			for j in d:
+				labels.add(j)
+
+				f_d[(filename, j)] = d[j] 
+
+	for j in fd:
+		st_file += j +' ' 
+				
+	print st_file+' count'
+	labels = list(labels)
+
+	for i in range (len(labels)):
+		st = str(labels[i])+' '
+		ref = 0
+		for j in fd:
+			if (j,labels[i]) not in f_d:
+				st += '0 '
+			else:
+				st +=  str(f_d[(j,labels[i])])+' '
+				ref += f_d[(j,labels[i])]
+		if ref != 0:
+			print st+str(ref)+' '
+
+	
+
 def test():
 	for i in os.listdir('.'):
 		if i[-6:] =='.mdcrd':
@@ -69,11 +118,12 @@ def test():
 
 if __name__ == '__main__':
 	#run_each_frame(sys.argv[1], sys.argv[2])
-	test()
+	#test()
 
 	#f = sys.argv[1].split('.')[0]
 	#d = np.load(sys.argv[1]).item()
 	#visual(d,f)
+	write_o()
 
 
 

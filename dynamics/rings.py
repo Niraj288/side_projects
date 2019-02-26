@@ -1,4 +1,6 @@
+import sys
 import data
+import itertools as itt
 import matplotlib.pyplot as plt
 import copy
 from mpl_toolkits.mplot3d import Axes3D
@@ -6,6 +8,8 @@ from matplotlib import style
 import multiprocessing as mp
 import numpy as np
 style.use("ggplot")
+
+sys.setrecursionlimit(1500)
 
 class Stack:
      def __init__(self):
@@ -56,13 +60,18 @@ def printAllPaths(cstate, goal, d,links_h,links_o,hbonds,obonds, vs, path, count
 
     # Mark the current node as visited and store in path 
     #print cstate, next_state(cstate, d,links_h,links_o,hbonds,obonds), path, count
-    
+    lim = 18 # limit backtrack
+
+    if count > lim :
+    	return 
+
     vs.add(cstate)
     path.append(cstate) 
     count += 1
     # If current vertex is same as destination, then print 
     # current path[] 
-    if cstate in goal and count >3: 
+    
+    if cstate in goal and count > 5: 
         fli.append(copy.copy(path)) 
     else: 
         # If current vertex is not destination 
@@ -92,82 +101,7 @@ def compute(x, d,links_h,links_o,hbonds,obonds, output):
 			flis_f.append(i)
 			fcheck.append(temp)
 
-
-	'''#print fli
-				c_li = []
-				for i in fli:
-					c = copy.copy(i)
-					c.sort()
-					c_li.append(c)
-			
-				inde = []
-				for i in range (len(c_li)):
-					for j in range (len(c_li)):
-						if i == j:
-							continue
-						if c_li[i] == c_li[j]:
-							inde.append(j)
-			
-				print inde
-				fli_f = []
-				for i in range (len(fli)):
-					if i not in inde:
-						fli_f.append(fli[i])'''
-
 	output.put((x, flis_f))
-
-def get_max_cycles_only(f):
-	#print f
-	ring_size = {}
-	vs = set()
-	for i in f:
-
-		ma = []
-		for j in f[i]:
-			for k in j:
-				if k in vs:
-					continue
-				if k in f:
-					#print k, len(f[k])
-					ma.append([len(f[k]),f[k]])
-		
-		if len(ma) == 0:
-			continue
-		
-		ma.sort(reverse = True)
-		#print ma[0], 'ma'
-		l = [ma[0]]
-
-		count = 1
-		while count < len(ma) and len(ma)>1:
-			if ma[count][0] == ma[count-1][0]:
-				a,b = copy.copy(ma[count][1]), copy.copy(ma[count-1][1])
-				a = sorted(a, key=lambda x: len(x), reverse=True)
-				b = sorted(b, key=lambda x: len(x), reverse=True)
-				if len(a) < 1 or len(b) < 1:
-					break
-				c, d = copy.copy(a[0]), copy.copy(b[0])
-				c.sort()
-				d.sort()
-
-				if c == d:
-					pass
-				else:
-					#print c, d
-					l.append(ma[count])
-			else:
-				break
-			count+=1
-		if l[0][0] not in ring_size:
-			ring_size[l[0][0]] = [l]
-		else:
-			ring_size[l[0][0]].append(l)
-		for j in f[i]:
-			for k in j:
-				vs.add(k)
-		#print vs
-		#print l
-	return ring_size
 
 
 def make_block(a,b,c,d,incr):
@@ -205,70 +139,6 @@ def make_block(a,b,c,d,incr):
 					ld[int(ij[0])] = d[int(ij[0])]
 				block.append(ld)
 	return block
-
-
-def compute_all_cycles(d,links_h,links_o,hbonds,obonds):
-
-	output = mp.Queue()
-
-	processes = [mp.Process(target=compute, args=(x, d,links_h,links_o,hbonds,obonds, output)) for x in d if d[x][0] == 'O']
-
-	for p in processes:
-		p.start()
-	for p in processes:
-		p.join()
-	
-	results = [output.get() for p in processes]
-	#print results
-	res_dict = {}
-	for i in results:
-		res_dict[i[0]] = i[1]
-
-	return res_dict
-	
-
-def write_o(pr, d, links_h,links_o,hbonds,obonds, w = None):
-	'''
-	cli = [] 
-	fli = {}
-	for i in results:
-		a,b = i 
-		for j in b:
-			ck = copy.copy(j)
-			ck.sort()
-			if ck not in cli:
-				cli.append(ck)
-
-				if len(ck) in fli:
-					fli[len(ck)].append(j)
-				else:
-					fli[len(ck)] = [j]
-	'''
-	
-	if w:
-		count = 0
-		for i in pr:
-			#print pr[i][0][0][1]
-			ij = [len(ijk) for ijk in pr[i][0][0][1]]
-			ij.sort(reverse = True)
-			if ij[0] in w:
-				for j in pr[i]:
-					for k in j:
-						li = []
-						f = open('ring'+str(ij[0])+'-'+str(count)+'.com', 'w')
-						f.write("""hf
-
-comment
-
-0 1 
-""")
-						count+=1
-						for l in k[1]:
-							for m in l:
-								if m not in li:
-									li.append(m)
-									f.write(' '.join(map(str,d[m]))+'\n')
-						f.close()
 
 
 def bfs(cstate,d,links_h,links_o,hbonds,obonds):    
@@ -402,58 +272,132 @@ def visualize(rings,links_o,links_h):
 				ax.plot(X,Y,Z,marker='o')
 				plt.show()
 
-def merge_two_dicts(x, y):
-    z = x.copy()   # start with x's keys and values
-    z.update(y)    # modifies z with y's keys and values & returns None
-    return z
 
+def compute_all_cycles2(d,links_h,links_o,hbonds,obonds):
 
-def job(d,links_h,links_o,hbonds,obonds,a=100,b=100,c=100):
-	block = make_block(int(a)+1, int(b/2)+1, int(c/2)+1, d, 8)
-	#print len(block[0])
-	res_dict = {}
-	for i in block:
-		#print len(i)
-		res_dict = merge_two_dicts(compute_all_cycles(i,links_h,links_o,hbonds,obonds),res_dict)
+	output = mp.Queue()
+
+	processes = [mp.Process(target=compute, args=(x, d,links_h,links_o,hbonds,obonds, output)) for x in d if d[x][0] == 'O']
+
+	for p in processes:
+		p.start()
+	for p in processes:
+		p.join()
 	
-		
-	pr = get_max_cycles_only(res_dict)
-
-	f_d = {}
+	results = [output.get() for p in processes]
 
 	check_lis = []
+	res = []
+	for i in results:
+		for j in i[1]:
+			temp = copy.copy(j)
+			temp.sort()
+			if temp not in check_lis:
+				res.append(j)
+				check_lis.append(temp)
+	#print len(check_lis)
+	return res
 
-	#print pr
+def combo(rings):
+	rd = {} # dictionary for all atoms in rings
 
-	for i in pr:
-		for j in pr[i]:
-			for k in j:
-				l = map(len,k[1])
-				l.sort(reverse=True)
-				ring_type = '-'.join(map(str,l))
-				if k[0] < 4:
-					continue
-				ch = list(set(np.concatenate(np.array(k[1])).ravel()))
-				ch.sort()
-				chk = copy.copy(ch)
-				if chk in check_lis:
-					continue
-				if ring_type in f_d:
-					if chk not in check_lis:
-						f_d[ring_type]+=1
-				else:
-					f_d[ring_type] = 1
+	#rings = [ringsD[i] for i in ringsD]
 
-				check_lis.append(chk)
+	#print rings
+	
+	for i in range (len(rings)):
+		for j in rings[i]:
+			if j in rd:
+				rd[j].append(i)
+			else:
+				rd[j] = [i]
+	#print rd
 
-	return f_d
+	
+	check_lis = []
+	flis = []
+
+	def recr(ring_lis, id):
+
+		for k in ring_lis:
+			if k in rd:
+				coms = []
+				for l in range (len(rd[k])):
+					coms += list(itt.combinations(rd[k], l+1))
+				combs = []
+				for c in coms:
+					ct = list(set([id] + list(c)))
+					temp = copy.copy(ct)
+					temp.sort()
+					if temp not in check_lis:
+						check_lis.append(temp)
+						flis.append(ct)
+	
+	for i in range (len(rings)):
+		recr(rings[i], i)
+
+	return flis
+
+# user readable format for ring type
+def conv_combo(rings, comb):
+	rd = {}
+
+	for i in comb:
+		li = [len(rings[j]) for j in i]
+		li.sort(reverse = True)
+
+		li = '-'.join(map(str, li))
+		'''
+		if li == '12-10-10':
+			for k in [' '.join(map(str, rings[j]))+'\n' for j in i]:
+				print k
+		'''
+		if li in rd:
+			rd[li]+=1
+		else:
+			rd[li] = 1
+	
+	return rd 
+
+def job(d,links_h,links_o,hbonds,obonds,a=100,b=100,c=100):
+	block = make_block(int(a)+1, int(b/2)+1, int(c/2)+1, d, 6)
+	res = []
+	check_lis = []
+	for i in block:
+		#print len(i)
+		results = compute_all_cycles2(i,links_h,links_o,hbonds,obonds)
+		for j in results:
+			temp = copy.copy(j)
+			temp.sort()
+			if temp not in check_lis:
+				res.append(j)
+				check_lis.append(temp)
+
+	allComboRings = combo(res)
+
+	#print allComboRings
+
+	return conv_combo(res, allComboRings) 
 
 
 if __name__=='__main__':
 
 	d,links_h,links_o,hbonds,obonds=data.data()
 
-	print job(d,links_h,links_o,hbonds,obonds)
+	print job(d,links_h,links_o,hbonds,obonds,35, 35, 35)
+
+	'''
+
+	allRings = compute_all_cycles2(d,links_h,links_o,hbonds,obonds)
+	
+	print len(allRings)
+
+	allComboRings = combo(allRings)
+
+	#print allComboRings
+
+	print conv_combo(allRings, allComboRings)
+	'''
 
 	'''
 
