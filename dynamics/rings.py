@@ -338,8 +338,50 @@ def combo(rings):
 
 	return flis
 
+def writeO(li, comb, rings, d,links_h,links_o,hbonds,obonds):
+	f = open(li+'.com','w')
+	coords = []
+	vs = set()
+	for i in comb:
+		temp = rings[i] 
+		#print temp
+		for j in temp:
+			if d[j][0] == 'O':
+				t = links_o[j]
+				#print t
+				for k in t:
+					if k not in vs:
+						coords.append(' '.join(map(str, d[k])))
+						vs.add(k)
+
+			if d[j][0] == 'H':
+				t = links_h[j]
+				#print t
+				for k in t:
+					if k not in vs:
+						coords.append(' '.join(map(str, d[k])))
+						vs.add(k)
+
+			if j not in vs:
+				coords.append(' '.join(map(str, d[j])))
+				vs.add(j)
+
+	st = '''hf/b3lyp
+
+comment
+
+0 1
+'''
+	st += '\n'.join(coords)
+	st+= '\n\n'
+
+	f.write(st)
+	f.close()
+
+
+
 # user readable format for ring type
-def conv_combo(rings, comb):
+def conv_combo(rings, comb, d,links_h,links_o,hbonds,obonds):
 	rd = {}
 
 	for i in comb:
@@ -356,6 +398,7 @@ def conv_combo(rings, comb):
 			rd[li]+=1
 		else:
 			rd[li] = 1
+			writeO(li, i, rings, d,links_h,links_o,hbonds,obonds)
 	
 	return rd 
 
@@ -377,7 +420,7 @@ def job(d,links_h,links_o,hbonds,obonds,a=100,b=100,c=100):
 
 	#print allComboRings
 
-	return conv_combo(res, allComboRings) 
+	return conv_combo(res, allComboRings, d,links_h,links_o,hbonds,obonds) 
 
 
 if __name__=='__main__':

@@ -48,8 +48,8 @@ def get_coord_opc(file,topo,frames=None):
 	pb = list(t.unitcell_lengths)
 	for frame in range (0,len(t.xyz),100):
 		lis=t.xyz[frame]
-		print len(lis)
-		break
+		#print len(lis)
+		#break
 		d={}
 		
 		ref=1
@@ -109,8 +109,8 @@ def get_coord_fb_3p(file,topo,frames=None):
 	pb = list(t.unitcell_lengths)
 	for frame in range (0,len(t.xyz),100):
 		lis=t.xyz[frame]
-		print len(lis)
-		break
+		#print len(lis)
+		#break
 		d={}
 		
 		ref=1
@@ -171,7 +171,7 @@ def get_coord_tip5p(file,topo,frame=None): # tip5p
 	return alld, pbc
 
 def get_coord(file, topo, frame = None):
-	return get_coord_fb_4p(file, topo, frame)
+	return get_coord_fb_3p(file, topo, frame)
 
 if __name__=='__main__':
 	a=sys.argv[1]
