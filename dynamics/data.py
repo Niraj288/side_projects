@@ -188,7 +188,7 @@ def temp_d():
 	if len(sys.argv) > 1:
 		file = open(sys.argv[1], 'r')
 	else:
-		file = open('/Users/47510753/Documents/side_projects/dynamics/temp.com','r')
+		file = open('/Users/47510753/Documents/side_projects/dynamics/book.com','r')
 		#file = open('/Users/47510753/Documents/water/test.com', 'r')
 	lines=file.readlines()
 	file.close()
