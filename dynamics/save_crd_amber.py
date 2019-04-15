@@ -32,7 +32,99 @@ def get_coord_tip4p(file,topo,frames=None):
 					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
 					ref+=1
 				#print list(lis[i+j])
-				
+
+		alld[refe]=d
+		pbc[refe] = map(lambda x : x*10, pb[frame])
+
+		refe+=1 
+	return alld, pbc
+
+def get_coord_opc(file,topo,frames=None):
+	#print 'smthing'
+	t=md.load(file,top=topo)
+	refe=0
+	alld={}
+	pbc = {}
+	pb = list(t.unitcell_lengths)
+	for frame in range (0,len(t.xyz),100):
+		lis=t.xyz[frame]
+		#print len(lis)
+		#break
+		d={}
+		
+		ref=1
+		
+		for i in range (0,len(lis),4):
+			for j in range (4):
+				if j==0:
+					d[ref]=['O']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				elif j==1 or j==2:
+					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				#print list(lis[i+j])
+
+		alld[refe]=d
+		pbc[refe] = map(lambda x : x*10, pb[frame])
+
+		refe+=1 
+	return alld, pbc
+
+def get_coord_fb_4p(file,topo,frames=None):
+	#print 'smthing'
+	t=md.load(file,top=topo)
+	refe=0
+	alld={}
+	pbc = {}
+	pb = list(t.unitcell_lengths)
+	for frame in range (0,len(t.xyz),100):
+		lis=t.xyz[frame]
+		#print len(lis)
+		d={}
+		
+		ref=1
+		
+		for i in range (0,len(lis),4):
+			for j in range (4):
+				if j==0:
+					d[ref]=['O']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				elif j==1 or j==2:
+					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				#print list(lis[i+j])
+
+		alld[refe]=d
+		pbc[refe] = map(lambda x : x*10, pb[frame])
+
+		refe+=1 
+	return alld, pbc
+
+def get_coord_fb_3p(file,topo,frames=None):
+	#print 'smthing'
+	t=md.load(file,top=topo)
+	refe=0
+	alld={}
+	pbc = {}
+	pb = list(t.unitcell_lengths)
+	for frame in range (0,len(t.xyz),100):
+		lis=t.xyz[frame]
+		#print len(lis)
+		#break
+		d={}
+		
+		ref=1
+		
+		for i in range (0,len(lis),3):
+			for j in range (3):
+				if j==0:
+					d[ref]=['O']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				elif j==1 or j==2:
+					d[ref]=['H']+map(lambda x: x*10, list(lis[i+j]))
+					ref+=1
+				#print list(lis[i+j])
+
 		alld[refe]=d
 		pbc[refe] = map(lambda x : x*10, pb[frame])
 
@@ -79,7 +171,7 @@ def get_coord_tip5p(file,topo,frame=None): # tip5p
 	return alld, pbc
 
 def get_coord(file, topo, frame = None):
-	return get_coord_tip4p(file, topo, frame)
+	return get_coord_fb_3p(file, topo, frame)
 
 if __name__=='__main__':
 	a=sys.argv[1]

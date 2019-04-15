@@ -29,6 +29,7 @@ def visual(res, file):
 	plt.savefig(file+'.png')
 
 def run_each_frame(file, topo):
+	print file
 	alld, pbc = sca.get_coord(file, topo)
 	res_d = {} # contains information for each frame
 
@@ -39,7 +40,7 @@ def run_each_frame(file, topo):
 		a,b,c = pbc[frame]
 		d,links_h,links_o,hbonds,obonds=data.data(alld[frame], a, b, c)
 		temp_d = hbtype.result(d,links_h,links_o,hbonds,obonds)
-
+		#print temp_d
 		for i in temp_d:
 			temp_d[i] = len(temp_d[i])
 			if i not in avg_dict:
